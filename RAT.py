@@ -55,6 +55,9 @@ class SociusTests(unittest.TestCase):
         sleep(float(wait_time))
 
     def login_facebook_account(self, username, password, must=True):
+        # wait login transition
+        self.wait_for_transition()
+
         try:
             # Webview-based
             allEditText = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.EditText")))
@@ -156,14 +159,13 @@ class SociusTests(unittest.TestCase):
     def enable_usage_access_sony_m4(self, appName=APP_NAME, must=False):
         try:
             # Usage access permission
-            xpath = "//android.view.View[1]/android.widget.FrameLayout[2]/android.widget.LinearLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.ListView[1]/*"
-            items = self.wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
+            items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
 
             for el in items:
-                app = el.find_element_by_class_name("android.widget.TextView")
-                self.assertIsNotNone(app)
-                if appName in app.text:
-                    app.click()
+                print el.text
+                if appName in el.text:
+                    # 1st level of setting
+                    el.click()
                     break
 
             # Confirmation
@@ -231,7 +233,8 @@ class SociusTests(unittest.TestCase):
                 return False
             raise
 
-    def fresh_install_and_enable_usage_access(self):
+    @pytest.mark.first
+    def test_fresh_install_and_enable_usage_access(self):
         try:
             # Facebook Login button on Soocii
             el = self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
@@ -245,7 +248,7 @@ class SociusTests(unittest.TestCase):
             self.catch_failure("except")
             raise
 
-    def login_with_facebook_webview(self):
+    def test_login_existing_facebook_account(self):
         try:
             # Facebook Login button on Soocii
             el = self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
@@ -260,21 +263,6 @@ class SociusTests(unittest.TestCase):
         except:
             self.catch_failure("except")
             raise
-
-    # def test_login_existing_facebook_account(self):
-    #     # Facebook Login button on Soocii
-    #     el = self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
-    #     self.assertIsNotNone(el)
-    #     el.click()
-
-    #     self.login_facebook_account("doctorfamily.mobi@gmail.com", "drmobile@123456")
-
-    @pytest.mark.first
-    def test_fresh_install_and_enable_usage_access(self):
-        self.fresh_install_and_enable_usage_access()
-
-    def test_facebook_login(self):
-        self.login_with_facebook_webview()
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(SociusTests)
