@@ -10,17 +10,22 @@ from appium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 
 # Returns abs path relative to this file and not cwd
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
+# app name
+APP_NAME="Soocii-staging"
+# package name
+PACKAGE_NAME="me.soocii.socius.staging"
+# defautl wait time in second
+WAIT_TIME=5
+
 class SociusTests(unittest.TestCase):
     def setUp(self):
-        wait_time = 5
-
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
         desired_caps['platformVersion'] = '5.0'
@@ -31,12 +36,11 @@ class SociusTests(unittest.TestCase):
         )
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
-        self.driver.implicitly_wait(wait_time)
-        self.wait = WebDriverWait(self.driver, wait_time)
+        self.driver.implicitly_wait(WAIT_TIME)
+        self.wait = WebDriverWait(self.driver, WAIT_TIME)
 
     def tearDown(self):
         # remove app
-        #self.driver.remove_app('me.soocii.socius.staging')
         self.driver.close_app()
 
         # end the session
@@ -46,6 +50,9 @@ class SociusTests(unittest.TestCase):
         with open(prefix+"_page_source.xml", "w") as xml_file:
             xml_file.write(self.driver.page_source.encode('utf8'))
         self.driver.save_screenshot(prefix+'_screenshot.png')
+
+    def wait_for_transition(self, wait_time=3):
+        sleep(float(wait_time))
 
     def login_facebook_account(self, username, password, must=True):
         try:
@@ -70,6 +77,9 @@ class SociusTests(unittest.TestCase):
             print el.get_attribute('name')
             el.click()
 
+            # wait for loading
+            self.wait_for_transition()
+
             # Has granted facebook permission
             xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.view.View[2]/android.widget.Button[1]"
             okBtn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
@@ -89,34 +99,61 @@ class SociusTests(unittest.TestCase):
     def press_home_key(self):
         # sending 'Home' key event
         self.driver.press_keycode(3)
+        self.wait_for_transition(1)
+
+    def press_recent_apps_key(self):
+        # sending 'Recent Apps' key event
+        self.driver.press_keycode(187)
+        self.wait_for_transition(1)
 
     def start_usage_access_setting_page(self):
         self.driver.start_activity('com.android.settings', 'com.android.settings.Settings')
 
     # The function does not due to proguard
     def start_soocii(self):
-        self.driver.start_activity('me.soocii.socius.staging', 'me.soocii.socius.core.ui.MainActivity')
+        # self.driver.start_activity('me.soocii.socius.staging', 'me.soocii.socius.core.ui.MainActivity')
+        self.press_recent_apps_key()
+        try:
+            items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+            for el in items:
+                if APP_NAME in el.text:
+                    el.click()
+                    return
+            raise TimeoutException('could not identify soocii in recent apps')
+        except:
+            raise
 
-    def enable_usage_access_sony_z3(self, appName="Soocii", must=False):
-        self.start_usage_access_setting_page()
-        self.catch_failure('settings')
+    def enable_usage_access_sony_z3(self, appName=APP_NAME, must=False):
+        try:
+            # tap on "Continue"
+            window_size = self.driver.get_window_size()
+            x = window_size["width"] * 0.5
+            y = window_size["height"] * 0.85
+            self.driver.tap([(x, y)], 500)
+        except WebDriverException:
+            # continue with expected exception
+            pass
+
         try:
             # Usage access permission
             items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
 
             for el in items:
+                print el.text
                 if appName in el.text:
+                    # 1st level of setting
                     el.click()
+                    # 2nd level of setting
+                    switch = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "android.widget.Switch")))
+                    self.assertIsNotNone(switch)
+                    switch.click()
                     break
         except:
             if must == False:
                 return False
             raise
 
-    def enable_usage_access(self, appName="Soocii", must=False):
-        # wait for tutorial
-        sleep(5)
-
+    def enable_usage_access_sony_m4(self, appName=APP_NAME, must=False):
         try:
             # Usage access permission
             xpath = "//android.view.View[1]/android.widget.FrameLayout[2]/android.widget.LinearLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.ListView[1]/*"
@@ -143,23 +180,41 @@ class SociusTests(unittest.TestCase):
                 return False
             raise
 
-    def allow_system_permissions(self, must=False):
+    def enable_usage_access(self, appName=APP_NAME, must=False):
+        # wait for tutorial
+        self.wait_for_transition()
+
+        try:
+            self.enable_usage_access_sony_m4(appName=appName, must=must)
+        except:
+            try:
+                self.enable_usage_access_sony_z3(appName=appName, must=must)
+            except:
+                if must == False:
+                    return False
+                raise
+
+    def allow_system_permissions(self):
+        wait_time = WAIT_TIME
+        wait = WebDriverWait(self.driver, wait_time)
         try:
             while True:
-                allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
+                allBtns = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
                 self.assertEqual(2, len(allBtns))
                 for el in allBtns:
                     if el.text == "Allow":
                         el.click()
                         break            
-        except:
-            if must == False:
-                return False
-            raise
+                # decrease wait time
+                wait_time = wait_time / 2 if wait_time > 2 else 1
+                wait = WebDriverWait(self.driver, wait_time)
+        except TimeoutException:
+            # continue with expected exception
+            pass
 
     def skip_guide_mark(self, must=False):
         # wait login transition
-        sleep(5)
+        self.wait_for_transition(1)
 
         try:
             el = self.wait.until(EC.presence_of_element_located((By.ID, "guide")))
@@ -176,11 +231,8 @@ class SociusTests(unittest.TestCase):
                 return False
             raise
 
-    def first_login_and_enable_usage_access(self):
+    def fresh_install_and_enable_usage_access(self):
         try:
-            #self.start_usage_access_setting_page()
-            #self.enable_usage_access_sony_z3(must=True)
-
             # Facebook Login button on Soocii
             el = self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
             self.assertIsNotNone(el)
@@ -189,22 +241,22 @@ class SociusTests(unittest.TestCase):
             self.login_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
             self.allow_system_permissions()
             self.enable_usage_access(must=True)
-            self.press_back_key()
         except:
             self.catch_failure("except")
             raise
 
     def login_with_facebook_webview(self):
         try:
-            #self.start_usage_access_setting_page()
-
             # Facebook Login button on Soocii
             el = self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
             self.assertIsNotNone(el)
             el.click()
 
             presence = self.login_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
+            self.allow_system_permissions()
             self.skip_guide_mark(must=presence)
+            self.press_home_key()
+            self.start_soocii()
         except:
             self.catch_failure("except")
             raise
@@ -218,8 +270,8 @@ class SociusTests(unittest.TestCase):
     #     self.login_facebook_account("doctorfamily.mobi@gmail.com", "drmobile@123456")
 
     @pytest.mark.first
-    def test_first_login_and_enable_usage_access(self):
-        self.first_login_and_enable_usage_access()
+    def test_fresh_install_and_enable_usage_access(self):
+        self.fresh_install_and_enable_usage_access()
 
     def test_facebook_login(self):
         self.login_with_facebook_webview()
