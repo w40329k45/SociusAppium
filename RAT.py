@@ -38,7 +38,7 @@ class SociusTests(unittest.TestCase):
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(WAIT_TIME)
         self.wait = WebDriverWait(self.driver, WAIT_TIME)
-
+        self.window_size = self.driver.get_window_size()
     def tearDown(self):
         # remove app
         self.driver.close_app()
@@ -109,7 +109,7 @@ class SociusTests(unittest.TestCase):
         self.driver.press_keycode(187)
         self.wait_for_transition(1)
 
-    def start_usage_access_setting_page(self):
+    def start_setting_page(self):
         self.driver.start_activity('com.android.settings', 'com.android.settings.Settings')
 
     # The function does not due to proguard
@@ -126,12 +126,19 @@ class SociusTests(unittest.TestCase):
         except:
             raise
 
+    # support for sony z3, samsung note5
     def enable_usage_access_sony_z3(self, appName=APP_NAME, must=False):
         try:
-            # tap on "Continue"
-            window_size = self.driver.get_window_size()
-            x = window_size["width"] * 0.5
-            y = window_size["height"] * 0.85
+            # try tap on "Continue"
+            x = self.window_size["width"] * 0.5
+
+            y = self.window_size["height"] * 0.80
+            self.driver.tap([(x, y)], 500)
+
+            y = self.window_size["height"] * 0.85
+            self.driver.tap([(x, y)], 500)
+
+            y = self.window_size["height"] * 0.9
             self.driver.tap([(x, y)], 500)
         except WebDriverException:
             # continue with expected exception
@@ -184,9 +191,9 @@ class SociusTests(unittest.TestCase):
 
     def enable_usage_access(self, appName=APP_NAME, must=False):
         # wait for tutorial
-        self.wait_for_transition()
+        self.wait_for_transition(5)
 
-        try:
+        try:            
             self.enable_usage_access_sony_m4(appName=appName, must=must)
         except:
             try:
@@ -200,13 +207,17 @@ class SociusTests(unittest.TestCase):
         wait_time = WAIT_TIME
         wait = WebDriverWait(self.driver, wait_time)
         try:
+            count = 1
             while True:
                 allBtns = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-                self.assertEqual(2, len(allBtns))
+                #self.assertEqual(2, len(allBtns))
                 for el in allBtns:
-                    if el.text == "Allow":
+                    if el.text in ["Allow", u"允許"]:
                         el.click()
                         break            
+                if count > 5:
+                    raise TimeoutException()
+                count = count + 1
                 # decrease wait time
                 wait_time = wait_time / 2 if wait_time > 2 else 1
                 wait = WebDriverWait(self.driver, wait_time)
@@ -223,9 +234,8 @@ class SociusTests(unittest.TestCase):
             self.assertIsNotNone(el)
 
             # tap on screen 4 times
-            window_size = self.driver.get_window_size()
-            center_x = window_size["width"] / 2
-            center_y = window_size["height"] / 2
+            center_x = self.window_size["width"] / 2
+            center_y = self.window_size["height"] / 2
             for i in range(1, 5):
                 self.driver.tap([(center_x, center_y)], 500)
         except:
