@@ -68,6 +68,7 @@ class Socius(unittest.TestCase):
         deleteBtn = self.wait.until(EC.presence_of_element_located((By.ID, "btn_delete_account")))
         self.assertIsNotNone(deleteBtn)
         deleteBtn.click()
+        self.util.click_button_with_text("Logout")
 
     def click_logout_button(self):
         self.start_logger_activity()
