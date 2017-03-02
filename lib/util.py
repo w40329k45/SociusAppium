@@ -1,8 +1,6 @@
 #coding=utf-8
 import unittest
 
-from time import sleep
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -10,39 +8,61 @@ from selenium.common.exceptions import TimeoutException, WebDriverException, NoS
 
 import SociusAppium.config as config
 
-class Util(unittest.TestCase):
-    def __init__(self, driver, wait, window_size):
-        assert driver is not None
-        assert wait is not None
-        assert window_size is not None
-        self.driver = driver
-        self.wait = wait
-        self.window_size = window_size
+from base import AppiumUtil
 
-    def wait_for_transition(self, wait_time=3):
-        sleep(float(wait_time))
+class Facebook(unittest.TestCase, AppiumUtil):
+    def __init__(self, driver, window_size):
+        AppiumUtil.__init__(self, driver, window_size)
 
-    def press_back_key(self):
-        # sending 'Back' key event
-        self.driver.press_keycode(4)
-        self.wait_for_transition(1)
+    def login(self, username, password):
+        bClickedLogin = False
 
-    def press_home_key(self):
-        # sending 'Home' key event
-        self.driver.press_keycode(3)
-        self.wait_for_transition(1)
+        # wait login transition
+        self.wait_transition()
 
-    def press_recent_apps_key(self):
-        # sending 'Recent Apps' key event
-        self.driver.press_keycode(187)
-        self.wait_for_transition(1)
+        # Webview-based
+        allEditText = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.EditText")))
+        self.assertTrue(len(allEditText)==2)
+        self.assertIsNotNone(allEditText)
+        # User name field
+        el = allEditText[0]
+        print el.text
+        el.send_keys(username)
+        self.driver.hide_keyboard()
+        # Password field
+        el = allEditText[1]
+        print el.text
+        el.send_keys(password)
+        self.driver.hide_keyboard()
 
-    def click_button_with_text(self, text):
-        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-        for el in items:
-            if el.text in text:
+        allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
+        for el in allBtns:
+            print el.get_attribute('name')
+            if el.get_attribute('name').strip() in [u"登入"]:
                 el.click()
-                return
+                bClickedLogin = True
+                break
+        if bClickedLogin is False: raise NoSuchElementException('could not identify facebook login button in the page')
+
+        # wait for loading
+        self.wait_transition()
+
+        # grant facebook permission
+        try:
+            # Not grant facebook permission yet
+            xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.widget.Button[1]"
+            btn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+            btn.click()
+        except:
+            # Has granted facebook permission
+            xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.view.View[2]/android.widget.Button[1]"
+            btn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+            btn.click()
+
+class Util(unittest.TestCase, AppiumUtil):
+    def __init__(self, driver, window_size):
+        AppiumUtil.__init__(self, driver, window_size)
+        self.fb = Facebook(driver, window_size)
 
     def start_soocii(self):
         # The function does not work due to missing android:exported=”true” for the activity
@@ -53,15 +73,10 @@ class Util(unittest.TestCase):
             if config.APP_NAME in el.text:
                 el.click()
                 return
-        raise TimeoutException('could not identify soocii in recent apps')
+        raise NoSuchElementException('could not identify soocii in recent apps')
 
     def start_setting_page(self):
         self.driver.start_activity('com.android.settings', 'com.android.settings.Settings')
-
-    def catch_screen(self, prefix):
-        with open(prefix+"_page_source.xml", "w") as xml_file:
-            xml_file.write(self.driver.page_source.encode('utf8'))
-        self.driver.save_screenshot(prefix+'_screenshot.png')
 
     # support for sony z3, samsung note5
     def __enable_usage_access_sony_z3(self, appName=config.APP_NAME):
@@ -97,38 +112,34 @@ class Util(unittest.TestCase):
                 # Back to Soccii App
                 self.press_back_key()
                 self.press_back_key()
-                break
+                print "enabled usage access in sony z3, samsung note5"
+                return True
 
     def __enable_usage_access_sony_m4(self, appName=config.APP_NAME):
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
-
         for el in items:
-            print el.text
+            print "__enable_usage_access_sony_m4: located item {}".format(el.text)
             if appName in el.text:
                 # 1st level of setting
                 el.click()
-
                 # Confirmation
-                allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-                self.assertEqual(2, len(allBtns))
-                for el in allBtns:
-                    if el.text == "OK":
-                        el.click()
-
-                        # Back to Soccii App
-                        self.press_back_key()
-                        break
-                break
+                if self.click_button_with_text("OK") is True:
+                    # Back to Soccii App
+                    self.press_back_key()
+                    print "enabled usage access in sony m4"
+                    return True
 
     def enable_usage_access(self, appName=config.APP_NAME):
         # wait for tutorial
-        self.wait_for_transition(5)
-
+        self.wait_transition(5)
         try:
+            print "try enable usage access in sony m4"
             self.__enable_usage_access_sony_m4(appName=appName)
-        except:
+        except Exception as e:
+            print str(e)
             try:
+                print "try enable usage access in sony z3, samsung note5"
                 self.__enable_usage_access_sony_z3(appName=appName)
             except:
                 raise
@@ -159,44 +170,5 @@ class Util(unittest.TestCase):
             # continue with expected exception
             pass
 
-    def login_facebook_account(self, username, password, must=True):
-        # wait login transition
-        self.wait_for_transition()
-
-        try:
-            # Webview-based
-            allEditText = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.EditText")))
-            self.assertTrue(len(allEditText)==2)
-            self.assertIsNotNone(allEditText)
-            # User name field
-            el = allEditText[0]
-            print el.text
-            el.send_keys(username)
-            self.driver.hide_keyboard()
-            # Password field
-            el = allEditText[1]
-            print el.text
-            el.send_keys(password)
-            self.driver.hide_keyboard()
-
-            allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-            self.assertTrue(len(allBtns)==1)
-            # Login button
-            el = allBtns[0]
-            print el.get_attribute('name')
-            el.click()
-
-            # wait for loading
-            self.wait_for_transition()
-
-            # Has granted facebook permission
-            xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.view.View[2]/android.widget.Button[1]"
-            okBtn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-            self.assertIsNotNone(okBtn)
-            okBtn.click()
-
-            return True
-        except:
-            if must is False:
-                return False
-            raise
+    def login_facebook_account(self, username, password):
+        self.fb.login(username, password)

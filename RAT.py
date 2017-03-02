@@ -5,8 +5,6 @@ import unittest
 
 from appium import webdriver
 
-from selenium.webdriver.support.ui import WebDriverWait
-
 import config
 from lib.util import Util
 from lib.socius import Socius
@@ -29,11 +27,10 @@ class SociusTests(unittest.TestCase):
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(config.WAIT_TIME)
-        self.wait = WebDriverWait(self.driver, config.WAIT_TIME)
         self.window_size = self.driver.get_window_size()
 
-        self.util = Util(self.driver, self.wait, self.window_size)
-        self.socius = Socius(self.driver, self.wait, self.window_size)
+        self.util = Util(self.driver, self.window_size)
+        self.socius = Socius(self.driver, self.window_size)
 
     def tearDown(self):
         # remove app
@@ -48,28 +45,31 @@ class SociusTests(unittest.TestCase):
             # Facebook Login button on Soocii
             self.socius.click_facebook_login_button()
 
-            self.util.login_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
+            self.util.login_existing_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
             self.util.allow_system_permissions()
             # only need to enable usage access once
             self.util.enable_usage_access()
             self.socius.skip_guide_mark()
+            # don't delete the account
         except:
-            self.util.catch_screen("except")
+            self.util.capture_screen("test_fresh_install_and_enable_usage_access")
             raise
 
-    def test_login_existing_facebook_account(self):
+    def test_login_new_facebook_account(self):
         try:
             # Facebook Login button on Soocii
             self.socius.click_facebook_login_button()
 
-            #self.util.login_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
-            self.util.login_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
+            self.util.login_existing_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
+            # self.util.login_new_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
+            self.socius.create_account("display", "soociidauto1")
+            self.socius.add_followers()
             self.util.allow_system_permissions()
             self.socius.skip_guide_mark()
-            #self.socius.click_delete_account_button()
-            self.socius.click_logout_button()
+            # delete the account for next time
+            self.socius.click_delete_account_button()
         except:
-            self.util.catch_screen("except")
+            self.util.capture_screen("test_login_new_facebook_account")
             raise
 
 if __name__ == '__main__':
