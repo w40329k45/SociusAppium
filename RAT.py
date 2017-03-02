@@ -66,6 +66,12 @@ class SociusTests(unittest.TestCase):
             displayName, soociiId = self.socius.get_personal_info()
             self.assertTrue(u"錢多多"==displayName, u"expect value {}, but return unexpected {}".format(u"錢多多", displayName))
             self.assertTrue("doctorfamily.mobi"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
+            # switch to home and back to soocii
+            self.util.press_home_key()
+            self.util.start_soocii()
+            displayName, soociiId = self.socius.get_personal_info()
+            self.assertTrue(u"錢多多"==displayName, u"expect value {}, but return unexpected {}".format(u"錢多多", displayName))
+            self.assertTrue("doctorfamily.mobi"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
             # don't delete the account
         except:
             self.util.capture_screen("test_fresh_install_and_enable_usage_access")
@@ -86,8 +92,12 @@ class SociusTests(unittest.TestCase):
             displayName, soociiId = self.socius.get_personal_info()
             self.assertTrue("display"==displayName, u"expect value {}, but return unexpected {}".format("display", displayName))
             self.assertTrue("soociidauto1"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
-            # # delete the account for next time
-            # self.socius.click_delete_account_button()
+            # switch to home and back to soocii
+            self.util.press_home_key()
+            self.util.start_soocii()
+            displayName, soociiId = self.socius.get_personal_info()
+            self.assertTrue("display"==displayName, u"expect value {}, but return unexpected {}".format("display", displayName))
+            self.assertTrue("soociidauto1"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
         except:
             self.util.capture_screen("test_login_new_facebook_account")
             raise
