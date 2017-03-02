@@ -45,7 +45,7 @@ class SociusTests(unittest.TestCase):
             # Facebook Login button on Soocii
             self.socius.click_facebook_login_button()
 
-            self.util.login_existing_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
+            self.util.login_facebook_account("doctorfamily.mobi@gmail.com", "soocii@2016")
             self.util.allow_system_permissions()
             # only need to enable usage access once
             self.util.enable_usage_access()
@@ -60,14 +60,13 @@ class SociusTests(unittest.TestCase):
             # Facebook Login button on Soocii
             self.socius.click_facebook_login_button()
 
-            self.util.login_existing_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
-            # self.util.login_new_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
+            self.util.login_facebook_account("soocii.auto1@gmail.com", "drmobile@123456")
             self.socius.create_account("display", "soociidauto1")
             self.socius.add_followers()
             self.util.allow_system_permissions()
             self.socius.skip_guide_mark()
             # delete the account for next time
-            self.socius.click_delete_account_button()
+            #self.socius.click_delete_account_button()
         except:
             self.util.capture_screen("test_login_new_facebook_account")
             raise
