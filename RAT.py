@@ -1,5 +1,7 @@
 #coding=utf-8
 import os
+import sys
+import logging
 import pytest
 import unittest
 
@@ -13,6 +15,15 @@ from lib.socius import Socius
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
+
+# logger
+logger = logging.getLogger()
+logFormatter = logging.Formatter(
+    '[%(asctime)-15s][%(filename)s][%(funcName)s#%(lineno)d] %(message)s')
+ch = logging.StreamHandler(sys.stdout)
+ch.setFormatter(logFormatter)
+logger.addHandler(ch)
+logger.setLevel(logging.INFO)
 
 class SociusTests(unittest.TestCase):
     def setUp(self):
@@ -50,6 +61,11 @@ class SociusTests(unittest.TestCase):
             # only need to enable usage access once
             self.util.enable_usage_access()
             self.socius.skip_guide_mark()
+            # expect seeing newsfeed page
+            self.assertTrue(self.socius.is_newsfeed())
+            displayName, soociiId = self.socius.get_personal_info()
+            self.assertTrue(u"錢多多"==displayName, u"expect value {}, but return unexpected {}".format(u"錢多多", displayName))
+            self.assertTrue("doctorfamily.mobi"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
             # don't delete the account
         except:
             self.util.capture_screen("test_fresh_install_and_enable_usage_access")
@@ -65,11 +81,19 @@ class SociusTests(unittest.TestCase):
             self.socius.add_followers()
             self.util.allow_system_permissions()
             self.socius.skip_guide_mark()
-            # delete the account for next time
-            #self.socius.click_delete_account_button()
+            # expect seeing newsfeed page
+            self.assertTrue(self.socius.is_newsfeed())
+            displayName, soociiId = self.socius.get_personal_info()
+            self.assertTrue("display"==displayName, u"expect value {}, but return unexpected {}".format("display", displayName))
+            self.assertTrue("soociidauto1"==soociiId, u"expect value {}, but return unexpected {}".format("soociidauto1", soociiId))
+            # # delete the account for next time
+            # self.socius.click_delete_account_button()
         except:
             self.util.capture_screen("test_login_new_facebook_account")
             raise
+        finally:
+            # delete the account for next time
+            self.socius.click_delete_account_button()
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(SociusTests)

@@ -3,8 +3,8 @@ import unittest
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
-import SociusAppium.config as config
 from base import AppiumUtil
 from util import Util
 
@@ -97,3 +97,45 @@ class Socius(unittest.TestCase, AppiumUtil):
         self.click_button_with_id("add_follow_confirm")
         # transition to next page
         self.wait_transition(1)
+
+    def __visibility_of_textview(self, text):
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            if el.text in text:
+                return True
+        return False
+
+    def is_newsfeed(self):
+        return self.__visibility_of_textview(["Newsfeed", u"即時動態"])
+
+    def is_friendlist(self):
+        return self.__visibility_of_textview(["Friends", u"好友頻道"])
+
+    def is_aboutme(self):
+        return self.__visibility_of_textview(["Me", u"關於我"])
+
+    def swipe_to_newsfeed(self):
+        return
+
+    def swipe_to_friendlist(self):
+        return
+
+    def swipe_to_aboutme(self):
+        if self.is_aboutme():
+            pass
+        elif self.is_newsfeed():
+            self.swipe_left()
+            self.swipe_left()
+        elif self.is_frindlist():
+            self.swipe_left()
+        else:
+            raise NoSuchElementException('could not identify [aboutme] page')
+
+    def get_personal_info(self):
+        self.swipe_to_aboutme()
+        self.click_button_with_id("tv_about_me_more")
+        displayName = self.get_text_with_id("tv_display_name")
+        soociiId = self.get_text_with_id("tv_soocii_id")
+        # go back to main page
+        self.press_back_key()
+        return displayName, soociiId

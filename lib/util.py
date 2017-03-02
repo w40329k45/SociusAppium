@@ -26,18 +26,18 @@ class Facebook(unittest.TestCase, AppiumUtil):
         self.assertIsNotNone(allEditText)
         # User name field
         el = allEditText[0]
-        print el.text
+        self.logger.info(u'text of located element: {}'.format(el.text))
         el.send_keys(username)
         self.driver.hide_keyboard()
         # Password field
         el = allEditText[1]
-        print el.text
+        self.logger.info(u'text of located element: {}'.format(el.text))
         el.send_keys(password)
         self.driver.hide_keyboard()
 
         allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
         for el in allBtns:
-            print el.get_attribute('name')
+            self.logger.info(u'text of located element: {}'.format(el.get_attribute('name')))
             if el.get_attribute('name').strip() in [u"登入"]:
                 el.click()
                 bClickedLogin = True
@@ -99,7 +99,7 @@ class Util(unittest.TestCase, AppiumUtil):
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
-            print el.text
+            self.logger.info(u'text of located element: {}'.format(el.text))
             if appName in el.text:
                 # 1st level of setting
                 el.click()
@@ -112,14 +112,14 @@ class Util(unittest.TestCase, AppiumUtil):
                 # Back to Soccii App
                 self.press_back_key()
                 self.press_back_key()
-                print "enabled usage access in sony z3, samsung note5"
+                self.logger.info('enabled usage access in sony z3, samsung note5')
                 return True
 
     def __enable_usage_access_sony_m4(self, appName=config.APP_NAME):
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
-            print "__enable_usage_access_sony_m4: located item {}".format(el.text)
+            self.logger.info(u'text of located element: {}'.format(el.text))
             if appName in el.text:
                 # 1st level of setting
                 el.click()
@@ -127,19 +127,19 @@ class Util(unittest.TestCase, AppiumUtil):
                 if self.click_button_with_text("OK") is True:
                     # Back to Soccii App
                     self.press_back_key()
-                    print "enabled usage access in sony m4"
+                    self.logger.info('enabled usage access in sony m4')
                     return True
 
     def enable_usage_access(self, appName=config.APP_NAME):
         # wait for tutorial
         self.wait_transition(5)
         try:
-            print "try enable usage access in sony m4"
+            self.logger.info('try enable usage access in sony m4')
             self.__enable_usage_access_sony_m4(appName=appName)
         except Exception as e:
-            print str(e)
+            self.logger.info('caught exception: {}'.format(str(e)))
             try:
-                print "try enable usage access in sony z3, samsung note5"
+                self.logger.info('try enable usage access in sony z3, samsung note5')
                 self.__enable_usage_access_sony_z3(appName=appName)
             except:
                 raise
@@ -171,4 +171,5 @@ class Util(unittest.TestCase, AppiumUtil):
             pass
 
     def login_facebook_account(self, username, password):
+        self.logger.info('username: {}, password: {}'.format(username, password))
         self.fb.login(username, password)

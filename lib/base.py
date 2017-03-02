@@ -1,8 +1,8 @@
 #coding=utf-8
-from time import sleep
-
+import logging
 import SociusAppium.config as config
 
+from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -11,6 +11,7 @@ class AppiumUtil():
     def __init__(self, driver, window_size):
         assert driver is not None
         assert window_size is not None
+        self.logger = logging.getLogger()
         self.driver = driver
         self.window_size = window_size
         self.wait = WebDriverWait(self.driver, config.WAIT_TIME)
@@ -47,6 +48,27 @@ class AppiumUtil():
         field.clear()
         field.send_keys(text)
         self.driver.hide_keyboard()
+
+    # tap on screen and swipe from right to left
+    def swipe_left(self):
+        left_x = self.window_size["width"] * 0.1
+        right_x = self.window_size["width"] * 0.9
+        center_y = self.window_size["height"] * 0.5
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+    # tap on screen and swipe from left to right
+    def swipe_right(self):
+        left_x = self.window_size["width"] * 0.1
+        right_x = self.window_size["width"] * 0.9
+        center_y = self.window_size["height"] * 0.5
+        self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+
+    def get_text_with_id(self, id):
+        text = self.wait.until(EC.presence_of_element_located((By.ID, id)))
+        return text.text
 
     def capture_screen(self, prefix):
         self.driver.save_screenshot(prefix+'_screenshot.png')
