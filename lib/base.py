@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-class AppiumUtil():
+class AppiumBaseHelper():
     def __init__(self, driver, window_size):
         assert driver is not None
         assert window_size is not None

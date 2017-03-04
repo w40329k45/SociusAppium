@@ -5,13 +5,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from base import AppiumUtil
-from util import Util
+from base import AppiumBaseHelper
+from syshelper import SysHelper
 
-class Socius(unittest.TestCase, AppiumUtil):
+class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver, window_size):
-        AppiumUtil.__init__(self, driver, window_size)
-        self.util = Util(driver, window_size)
+        AppiumBaseHelper.__init__(self, driver, window_size)
+        self.util = SysHelper(driver, window_size)
 
     def get_facebook_login_button(self):
         # Facebook Login button on Soocii

@@ -8,11 +8,11 @@ from selenium.common.exceptions import TimeoutException, WebDriverException, NoS
 
 import SociusAppium.config as config
 
-from base import AppiumUtil
+from base import AppiumBaseHelper
 
-class Facebook(unittest.TestCase, AppiumUtil):
+class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver, window_size):
-        AppiumUtil.__init__(self, driver, window_size)
+        AppiumBaseHelper.__init__(self, driver, window_size)
 
     def login(self, username, password):
         bClickedLogin = False
@@ -59,10 +59,10 @@ class Facebook(unittest.TestCase, AppiumUtil):
             btn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
             btn.click()
 
-class Util(unittest.TestCase, AppiumUtil):
+class SysHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver, window_size):
-        AppiumUtil.__init__(self, driver, window_size)
-        self.fb = Facebook(driver, window_size)
+        AppiumBaseHelper.__init__(self, driver, window_size)
+        self.fb = FacebookHelper(driver, window_size)
 
     def start_soocii(self):
         # The function does not work due to missing android:exported=”true” for the activity
