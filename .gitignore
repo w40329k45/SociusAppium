@@ -91,5 +91,9 @@ ENV/
 *.png
 *.xml
 
+# credential
+config.py
+
 # Others
 *.apk
+
