@@ -9,9 +9,8 @@ from base import AppiumBaseHelper
 from syshelper import SysHelper
 
 class SociusHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver, window_size):
-        AppiumBaseHelper.__init__(self, driver, window_size)
-        self.util = SysHelper(driver, window_size)
+    def __init__(self, driver):
+        AppiumBaseHelper.__init__(self, driver)
 
     def get_facebook_login_button(self):
         # Facebook Login button on Soocii

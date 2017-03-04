@@ -6,19 +6,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException
 
-import SociusAppium.config as config
-
 from base import AppiumBaseHelper
 
 class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver, window_size):
-        AppiumBaseHelper.__init__(self, driver, window_size)
+    def __init__(self, driver):
+        AppiumBaseHelper.__init__(self, driver)
 
     def login(self, username, password):
         bClickedLogin = False
 
         # wait login transition
-        self.wait_transition()
+        self.wait_transition(1)
 
         # Webview-based
         allEditText = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.EditText")))
@@ -45,7 +43,7 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
         if bClickedLogin is False: raise NoSuchElementException('could not identify facebook login button in the page')
 
         # wait for loading
-        self.wait_transition()
+        self.wait_transition(1)
 
         # grant facebook permission
         try:
@@ -60,9 +58,9 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
             btn.click()
 
 class SysHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver, window_size):
-        AppiumBaseHelper.__init__(self, driver, window_size)
-        self.fb = FacebookHelper(driver, window_size)
+    def __init__(self, driver):
+        AppiumBaseHelper.__init__(self, driver)
+        self.fb = FacebookHelper(driver)
 
     def start_soocii(self):
         # The function does not work due to missing android:exported=”true” for the activity
@@ -70,7 +68,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_recent_apps_key()
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
-            if config.APP_NAME in el.text:
+            if self.app_name in el.text:
                 el.click()
                 return
         raise NoSuchElementException('could not identify soocii in recent apps')
@@ -79,7 +77,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         self.driver.start_activity('com.android.settings', 'com.android.settings.Settings')
 
     # support for sony z3, samsung note5
-    def __enable_usage_access_sony_z3(self, appName=config.APP_NAME):
+    def __enable_usage_access_sony_z3(self):
         try:
             # try tap on "Continue"
             x = self.window_size["width"] * 0.5
@@ -100,7 +98,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
             self.logger.info(u'text of located element: {}'.format(el.text))
-            if appName in el.text:
+            if self.app_name in el.text:
                 # 1st level of setting
                 el.click()
 
@@ -115,12 +113,12 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 self.logger.info('enabled usage access in sony z3, samsung note5')
                 return True
 
-    def __enable_usage_access_sony_m4(self, appName=config.APP_NAME):
+    def __enable_usage_access_sony_m4(self):
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
             self.logger.info(u'text of located element: {}'.format(el.text))
-            if appName in el.text:
+            if self.app_name in el.text:
                 # 1st level of setting
                 el.click()
                 # Confirmation
@@ -130,28 +128,27 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                     self.logger.info('enabled usage access in sony m4')
                     return True
 
-    def enable_usage_access(self, appName=config.APP_NAME):
+    def enable_usage_access(self):
         # wait for tutorial
-        self.wait_transition(5)
+        self.wait_transition(3)
         try:
             self.logger.info('try enable usage access in sony m4')
-            self.__enable_usage_access_sony_m4(appName=appName)
+            self.__enable_usage_access_sony_m4()
         except Exception as e:
             self.logger.info('caught exception: {}'.format(str(e)))
             try:
                 self.logger.info('try enable usage access in sony z3, samsung note5')
-                self.__enable_usage_access_sony_z3(appName=appName)
+                self.__enable_usage_access_sony_z3()
             except:
                 raise
 
     def allow_system_permissions(self):
-        wait_time = config.WAIT_TIME
+        wait_time = 5
         wait = WebDriverWait(self.driver, wait_time)
         try:
             count = 1
             while True:
                 allBtns = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-                #self.assertEqual(2, len(allBtns))
                 if len(allBtns) == 0: return
                 for el in allBtns:
                     if el.text in ["Allow", u"允許"]:

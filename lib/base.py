@@ -1,22 +1,35 @@
 #coding=utf-8
 import logging
-import SociusAppium.config as config
 
 from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+# app name
+APP_NAME="Soocii-staging"
+# package name
+PACKAGE_NAME="me.soocii.socius.staging"
+# defautl wait time in second
+WAIT_TIME=5
+
 class AppiumBaseHelper():
-    def __init__(self, driver, window_size):
+    def __init__(self, driver):
         assert driver is not None
-        assert window_size is not None
         self.logger = logging.getLogger()
         self.driver = driver
-        self.window_size = window_size
-        self.wait = WebDriverWait(self.driver, config.WAIT_TIME)
+        self.window_size = self.driver.get_window_size()
+        self.wait = WebDriverWait(self.driver, WAIT_TIME)
 
-    def wait_transition(self, wait_time=3):
+    @property
+    def app_name(self):
+        return APP_NAME
+
+    @property
+    def package_name(self):
+        return PACKAGE_NAME
+
+    def wait_transition(self, wait_time):
         sleep(float(wait_time))
 
     def press_back_key(self):
