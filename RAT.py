@@ -39,7 +39,7 @@ class SociusTests(unittest.TestCase):
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(5)
         self.logger = logging.getLogger()
-        
+
         self.syshelper = SysHelper(self.driver)
         self.sociushelper = SociusHelper(self.driver)
 
