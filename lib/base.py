@@ -49,11 +49,13 @@ class AppiumBaseHelper():
 
     def click_button_with_text(self, text):
         btn = self.wait.until(EC.presence_of_element_located((By.NAME, text)))
+        assert (btn is not None)
         btn.click()
         return True
 
     def click_button_with_id(self, id):
         btn = self.wait.until(EC.presence_of_element_located((By.ID, id)))
+        assert (btn is not None)
         btn.click()
 
     def send_text_with_id(self, id, text):

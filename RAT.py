@@ -25,7 +25,7 @@ ch.setFormatter(logFormatter)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
-class SociusTests(unittest.TestCase):
+class FacebookAccountTests(unittest.TestCase):
     def setUp(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
@@ -81,11 +81,11 @@ class SociusTests(unittest.TestCase):
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
             # don't delete the account
         except:
-            self.logger.info('caught exception: {}'.format(str(e)))
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_fresh_install_and_enable_usage_access")
             raise
 
-    # Login with new facebook account who friend with existing facebook account
+    # Login with new facebook account who friend with existing facebook/soocii account
     def test_login_new_facebook_account(self):
         try:
             expectedDisplayName=config.NEW_FACEBOOK_ACCOUNT1_DISPLAYNAME
@@ -95,7 +95,7 @@ class SociusTests(unittest.TestCase):
             self.sociushelper.click_facebook_login_button()
 
             self.syshelper.login_facebook_account(config.NEW_FACEBOOK_ACCOUNT1, config.NEW_FACEBOOK_ACCOUNT1_PWD)
-            self.sociushelper.create_account(config.NEW_FACEBOOK_ACCOUNT1_DISPLAYNAME, config.NEW_FACEBOOK_ACCOUNT1_SOOCIIID)
+            self.sociushelper.create_account(expectedDisplayName, expectedSoociiId)
             self.sociushelper.add_followers()
             self.syshelper.allow_system_permissions()
             self.sociushelper.skip_guide_mark()
@@ -115,14 +115,79 @@ class SociusTests(unittest.TestCase):
             self.assertTrue(expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
         except:
-            self.logger.info('caught exception: {}'.format(str(e)))
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_login_new_facebook_account")
             raise
         finally:
             # delete the account for next time
             self.sociushelper.click_delete_account_button()
 
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(SociusTests)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    # TODO: Login with new facebook account who does NOT friend with any facebook/soocii account
+
+class EmailAccountTests(unittest.TestCase):
+    def setUp(self):
+        desired_caps = {}
+        desired_caps['platformName'] = 'Android'
+        desired_caps['platformVersion'] = '6.0.1'
+        desired_caps['deviceName'] = 'Android Emulator'
+        #desired_caps['full-reset'] = True
+        desired_caps['app'] = PATH(
+            'soocii_v0.0.1035_google_2017_0301_1102_staging.apk'
+        )
+
+        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
+        self.driver.implicitly_wait(5)
+        self.logger = logging.getLogger()
+
+        self.syshelper = SysHelper(self.driver)
+        self.sociushelper = SociusHelper(self.driver)
+
+    def tearDown(self):
+        # remove app
+        self.driver.close_app()
+
+        # end the session
+        self.driver.quit()
+
+    # Login with new email account
+    def test_login_new_email_account(self):
+        try:
+            expectedDisplayName="AutomationQA"
+            expectedSoociiId="AutomationQA1"
+
+            # Create new account button on Soocii
+            self.sociushelper.click_create_new_account_using_email_button()
+
+            self.sociushelper.create_account(
+                expectedDisplayName,
+                expectedSoociiId,
+                "automationqa1@soocii.me",
+                "password123456")
+            # self.sociushelper.add_followers()
+            self.syshelper.allow_system_permissions()
+            self.sociushelper.skip_guide_mark()
+            # expect seeing newsfeed page
+            self.assertTrue(self.sociushelper.is_newsfeed())
+            displayName, soociiId = self.sociushelper.get_personal_info()
+            self.assertTrue(expectedDisplayName==displayName,
+                            u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
+            self.assertTrue(expectedSoociiId==soociiId,
+                            u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+            # switch to home and back to soocii
+            self.syshelper.press_home_key()
+            self.syshelper.start_soocii()
+            displayName, soociiId = self.sociushelper.get_personal_info()
+            self.assertTrue(expectedDisplayName==displayName,
+                            u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
+            self.assertTrue(expectedSoociiId==soociiId,
+                            u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+        except:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_login_new_email_account")
+            raise
+        finally:
+            # delete the account for next time
+            self.sociushelper.click_delete_account_button()
+
+    # Login with existing email account
 

@@ -6,20 +6,17 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 from base import AppiumBaseHelper
-from syshelper import SysHelper
 
 class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver):
         AppiumBaseHelper.__init__(self, driver)
 
-    def get_facebook_login_button(self):
-        # Facebook Login button on Soocii
-        return self.wait.until(EC.presence_of_element_located((By.XPATH, "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.Button[1]")))
-
     def click_facebook_login_button(self):
-        el = self.get_facebook_login_button()
-        self.assertIsNotNone(el)
-        el.click()
+        self.click_button_with_id("btn_fb_login")
+        self.wait_transition(1)
+
+    def click_create_new_account_using_email_button(self):
+        self.click_button_with_id("create_email_account")
         self.wait_transition(1)
 
     def start_logger_activity(self):
@@ -84,10 +81,17 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         for i in range(1, 5):
             self.driver.tap([(center_x, center_y)], 500)
 
-    def create_account(self, displayName, soociiId):
+    def create_account(self, displayName, soociiId, email=None, pwd=None, confirmEmail=None, confirmPwd=None):
         self.send_text_with_id("display_name_value", displayName)
         self.send_text_with_id("soocii_id_value", soociiId)
         # email_value
+        if email is not None:
+            self.send_text_with_id("email_value", email)
+            self.send_text_with_id("email_confirm_value", email if confirmEmail is None else confirmEmail)
+        # password_value
+        if pwd is not None:
+            self.send_text_with_id("password_value", pwd)
+            self.send_text_with_id("password_confirm_value", pwd if confirmPwd is None else confirmPwd)
         self.click_button_with_id("register")
         # transition to next page
         self.wait_transition(1)
