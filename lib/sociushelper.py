@@ -83,14 +83,18 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def create_account(self, displayName, soociiId, email=None, pwd=None, confirmEmail=None, confirmPwd=None):
         self.send_text_with_id("display_name_value", displayName)
+        self.logger.info('sent display name: {}'.format(displayName))
         self.send_text_with_id("soocii_id_value", soociiId)
+        self.logger.info('sent soocii id: {}'.format(soociiId))
         # email_value
         if email is not None:
             self.send_text_with_id("email_value", email)
+            self.logger.info('sent email: {}'.format(email))
             self.send_text_with_id("email_confirm_value", email if confirmEmail is None else confirmEmail)
         # password_value
         if pwd is not None:
             self.send_text_with_id("password_value", pwd)
+            self.logger.info('sent password: {}'.format(pwd))
             self.send_text_with_id("password_confirm_value", pwd if confirmPwd is None else confirmPwd)
         self.click_button_with_id("register")
         # transition to next page
