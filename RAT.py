@@ -25,15 +25,15 @@ ch.setFormatter(logFormatter)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
-class FacebookAccountTests(unittest.TestCase):
+class BaseTests(unittest.TestCase):
     def setUp(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
-        desired_caps['platformVersion'] = '6.0.1'
+        desired_caps['platformVersion'] = config.PLATFORM_VERION
         desired_caps['deviceName'] = 'Android Emulator'
         #desired_caps['full-reset'] = True
         desired_caps['app'] = PATH(
-            'soocii_v0.0.1035_google_2017_0301_1102_staging.apk'
+            config.PATH_TO_TEST_APK
         )
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
@@ -50,6 +50,7 @@ class FacebookAccountTests(unittest.TestCase):
         # end the session
         self.driver.quit()
 
+class FacebookAccountTests(BaseTests):
     # Login with existing facebook account and enable usage access once
     @pytest.mark.first
     def test_fresh_install_and_enable_usage_access(self):
@@ -124,31 +125,7 @@ class FacebookAccountTests(unittest.TestCase):
 
     # TODO: Login with new facebook account who does NOT friend with any facebook/soocii account
 
-class EmailAccountTests(unittest.TestCase):
-    def setUp(self):
-        desired_caps = {}
-        desired_caps['platformName'] = 'Android'
-        desired_caps['platformVersion'] = '6.0.1'
-        desired_caps['deviceName'] = 'Android Emulator'
-        #desired_caps['full-reset'] = True
-        desired_caps['app'] = PATH(
-            'soocii_v0.0.1035_google_2017_0301_1102_staging.apk'
-        )
-
-        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
-        self.driver.implicitly_wait(5)
-        self.logger = logging.getLogger()
-
-        self.syshelper = SysHelper(self.driver)
-        self.sociushelper = SociusHelper(self.driver)
-
-    def tearDown(self):
-        # remove app
-        self.driver.close_app()
-
-        # end the session
-        self.driver.quit()
-
+class EmailAccountTests(BaseTests):
     # Login with new email account
     def test_login_new_email_account(self):
         try:
