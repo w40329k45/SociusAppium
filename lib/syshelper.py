@@ -1,4 +1,5 @@
 #coding=utf-8
+import sys
 import unittest
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -113,6 +114,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 self.logger.info('enabled usage access in sony z3, samsung note5')
                 return True
 
+    # support for sony z3, asus zenfone2
     def __enable_usage_access_sony_m4(self):
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
@@ -122,11 +124,18 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 # 1st level of setting
                 el.click()
                 # Confirmation
-                if self.click_button_with_text("OK") is True:
-                    # Back to Soccii App
-                    self.press_back_key()
-                    self.logger.info('enabled usage access in sony m4')
-                    return True
+                self.logger.info('identify confirmation dialog')
+                el = self.wait.until(EC.presence_of_element_located((By.ID, "alertTitle")))
+                self.logger.info('identified confirmation dialog')
+                if el is not None:
+                    if self.click_button_with_text(["OK", u"確定"]) is True:
+                        # Back to Soccii App
+                        self.press_back_key()
+                        self.logger.info('enabled usage access in sony m4')
+                        return True
+                # could not identify alert dialog
+                self.logger.info('could not identify confirmation dialog')
+                raise NoSuchElementException('could not identify confirmation dialog')
 
     def enable_usage_access(self):
         # wait for tutorial
@@ -134,8 +143,8 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         try:
             self.logger.info('try enable usage access in sony m4')
             self.__enable_usage_access_sony_m4()
-        except Exception as e:
-            self.logger.info('caught exception: {}'.format(str(e)))
+        except:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             try:
                 self.logger.info('try enable usage access in sony z3, samsung note5')
                 self.__enable_usage_access_sony_z3()
