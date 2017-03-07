@@ -48,15 +48,18 @@ class AppiumBaseHelper():
         self.wait_transition(1)
 
     def click_button_with_text(self, text):
-        btn = self.wait.until(EC.presence_of_element_located((By.NAME, text)))
-        assert (btn is not None)
-        btn.click()
-        return True
+        allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
+        for btn in allBtns:
+            if btn.text in text:
+                btn.click()
+                return True
+        return False
 
     def click_button_with_id(self, id):
         btn = self.wait.until(EC.presence_of_element_located((By.ID, id)))
-        assert (btn is not None)
+        if btn is None: return False
         btn.click()
+        return  True
 
     def send_text_with_id(self, id, text):
         field = self.wait.until(EC.presence_of_element_located((By.ID, id)))
