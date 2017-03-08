@@ -65,7 +65,11 @@ class AppiumBaseHelper():
         field = self.wait.until(EC.presence_of_element_located((By.ID, id)))
         field.clear()
         field.send_keys(text)
-        self.driver.hide_keyboard()
+        try:
+            self.driver.hide_keyboard()
+        except:
+            # ignore any exception due to asus zenfone does not always show soft keyword when sending keys
+            pass
 
     # tap on screen and swipe from right to left
     def swipe_left(self):
