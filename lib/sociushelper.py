@@ -17,7 +17,11 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def click_create_new_account_using_email_button(self):
         self.click_button_with_id("create_email_account")
-        self.wait_transition(1)
+        self.wait_transition(0.5)
+
+    def click_login_by_email_link(self):
+        self.click_button_with_id("login_by_email")
+        self.wait_transition(0.5)
 
     def start_logger_activity(self):
         # The function does not work due to missing android:exported=”true” for the activity
@@ -66,7 +70,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.start_logger_activity()
         self.click_button_with_id("btn_logout")
         # logout confirmation
-        self.click_button_with_text("Logout")
+        self.click_button_with_text(["Logout", u"登出"])
 
     def skip_guide_mark(self):
         # wait login transition
@@ -81,6 +85,15 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         for i in range(1, 5):
             self.driver.tap([(center_x, center_y)], 500)
 
+    def login_account(self, email, pwd):
+        self.send_text_with_id("email_value", email)
+        self.logger.info('sent email: {}'.format(email))
+        self.send_text_with_id("password_value", pwd)
+        self.logger.info('sent password: {}'.format(pwd))
+        self.click_button_with_id("login")
+        # transition to next page
+        self.wait_transition(0.5)
+
     def create_account(self, displayName, soociiId, email=None, pwd=None, confirmEmail=None, confirmPwd=None):
         self.send_text_with_id("display_name_value", displayName)
         self.logger.info('sent display name: {}'.format(displayName))
@@ -89,16 +102,16 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # email_value
         if email is not None:
             self.send_text_with_id("email_value", email)
-            self.logger.info('sent email: {}'.format(email))
             self.send_text_with_id("email_confirm_value", email if confirmEmail is None else confirmEmail)
+            self.logger.info('sent email: {}'.format(email))
         # password_value
         if pwd is not None:
             self.send_text_with_id("password_value", pwd)
-            self.logger.info('sent password: {}'.format(pwd))
             self.send_text_with_id("password_confirm_value", pwd if confirmPwd is None else confirmPwd)
+            self.logger.info('sent password: {}'.format(pwd))
         self.click_button_with_id("register")
         # transition to next page
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
     def add_followers(self):
         self.click_button_with_id("add_follow_confirm")

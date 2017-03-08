@@ -10,6 +10,7 @@ from appium import webdriver
 import config
 from lib.syshelper import SysHelper
 from lib.sociushelper import SociusHelper
+from lib.accounthelper import AccountHelper
 
 # Returns abs path relative to this file and not cwd
 PATH = lambda p: os.path.abspath(
@@ -31,6 +32,8 @@ class BaseTests(unittest.TestCase):
         desired_caps['platformName'] = 'Android'
         desired_caps['platformVersion'] = config.PLATFORM_VERION
         desired_caps['deviceName'] = 'Android Emulator'
+        desired_caps['unicodeKeyboard'] = True
+        desired_caps['resetKeyboard'] = True
         #desired_caps['full-reset'] = True
         desired_caps['app'] = PATH(
             config.PATH_TO_TEST_APK
@@ -129,35 +132,33 @@ class EmailAccountTests(BaseTests):
     # Login with new email account
     def test_login_new_email_account(self):
         try:
-            expectedDisplayName="AutomationQA"
-            expectedSoociiId="AutomationQA1"
+            accounthelper = AccountHelper()
 
             # Create new account button on Soocii
             self.sociushelper.click_create_new_account_using_email_button()
 
             self.sociushelper.create_account(
-                expectedDisplayName,
-                expectedSoociiId,
-                "automationqa1@soocii.me",
-                "password123456")
-            # self.sociushelper.add_followers()
+                accounthelper.name,
+                accounthelper.name,
+                accounthelper.email,
+                "password1234")
             self.syshelper.allow_system_permissions()
             self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             displayName, soociiId = self.sociushelper.get_personal_info()
-            self.assertTrue(expectedDisplayName==displayName,
-                            u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
-                            u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+            self.assertTrue(accounthelper.name==displayName,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
+            self.assertTrue(accounthelper.name==soociiId,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, soociiId))
             # switch to home and back to soocii
             self.syshelper.press_home_key()
             self.syshelper.start_soocii()
             displayName, soociiId = self.sociushelper.get_personal_info()
-            self.assertTrue(expectedDisplayName==displayName,
-                            u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
-                            u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+            self.assertTrue(accounthelper.name==displayName,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
+            self.assertTrue(accounthelper.name==soociiId,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, soociiId))
         except:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_login_new_email_account")
@@ -167,4 +168,52 @@ class EmailAccountTests(BaseTests):
             self.sociushelper.click_delete_account_button()
 
     # Login with existing email account
+    def test_login_existing_email_account(self):
+        try:
+            accounthelper = AccountHelper()
 
+            # Create new account button on Soocii
+            self.sociushelper.click_create_new_account_using_email_button()
+
+            self.sociushelper.create_account(
+                accounthelper.name,
+                accounthelper.name,
+                accounthelper.email,
+                "password1234")
+            self.syshelper.allow_system_permissions()
+            self.sociushelper.skip_guide_mark()
+            # expect seeing newsfeed page
+            self.assertTrue(self.sociushelper.is_newsfeed())
+            # logout
+            self.sociushelper.click_logout_button()
+
+            # login with the same account again
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account(accounthelper.email, "password1234")
+            # self.syshelper.allow_system_permissions()
+            self.sociushelper.skip_guide_mark()
+            # expect seeing newsfeed page
+            self.assertTrue(self.sociushelper.is_newsfeed())
+            displayName, soociiId = self.sociushelper.get_personal_info()
+            self.assertTrue(accounthelper.name==displayName,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
+            self.assertTrue(accounthelper.name==soociiId,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, soociiId))
+
+            # switch to home and back to soocii
+            self.syshelper.press_home_key()
+            self.syshelper.start_soocii()
+            displayName, soociiId = self.sociushelper.get_personal_info()
+            self.assertTrue(accounthelper.name==displayName,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
+            self.assertTrue(accounthelper.name==soociiId,
+                            u"expect value {}, but return unexpected {}".format(accounthelper.name, soociiId))
+        except:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_login_existing_email_account")
+            raise
+        finally:
+            # delete the account for next time
+            self.sociushelper.click_delete_account_button()
+
+    # TODO: create existing email account
