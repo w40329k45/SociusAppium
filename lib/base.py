@@ -35,17 +35,17 @@ class AppiumBaseHelper():
     def press_back_key(self):
         # sending 'Back' key event
         self.driver.press_keycode(4)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
     def press_home_key(self):
         # sending 'Home' key event
         self.driver.press_keycode(3)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
     def press_recent_apps_key(self):
         # sending 'Recent Apps' key event
         self.driver.press_keycode(187)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
     def click_button_with_text(self, text):
         allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
@@ -77,7 +77,7 @@ class AppiumBaseHelper():
         right_x = self.window_size["width"] * 0.9
         center_y = self.window_size["height"] * 0.5
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
     # tap on screen and swipe from left to right
     def swipe_right(self):
@@ -85,7 +85,7 @@ class AppiumBaseHelper():
         right_x = self.window_size["width"] * 0.9
         center_y = self.window_size["height"] * 0.5
         self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
 
     def get_text_with_id(self, id):
