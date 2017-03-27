@@ -67,7 +67,7 @@ class FacebookAccountTests(BaseTests):
             self.syshelper.allow_system_permissions()
             # only need to enable usage access once
             self.syshelper.enable_usage_access()
-            self.sociushelper.skip_guide_mark()
+            #self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             displayName, soociiId = self.sociushelper.get_personal_info()
@@ -102,7 +102,7 @@ class FacebookAccountTests(BaseTests):
             self.sociushelper.create_account(expectedDisplayName, expectedSoociiId)
             self.sociushelper.add_followers()
             self.syshelper.allow_system_permissions()
-            self.sociushelper.skip_guide_mark()
+            #self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             displayName, soociiId = self.sociushelper.get_personal_info()
@@ -143,7 +143,7 @@ class EmailAccountTests(BaseTests):
                 accounthelper.email,
                 "password1234")
             self.syshelper.allow_system_permissions()
-            self.sociushelper.skip_guide_mark()
+            #self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             displayName, soociiId = self.sociushelper.get_personal_info()
@@ -181,7 +181,7 @@ class EmailAccountTests(BaseTests):
                 accounthelper.email,
                 "password1234")
             self.syshelper.allow_system_permissions()
-            self.sociushelper.skip_guide_mark()
+            #self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             # logout
