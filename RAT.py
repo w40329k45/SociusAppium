@@ -190,8 +190,7 @@ class EmailAccountTests(BaseTests):
             # login with the same account again
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account(accounthelper.email, "password1234")
-            # self.syshelper.allow_system_permissions()
-            self.sociushelper.skip_guide_mark()
+            #self.sociushelper.skip_guide_mark()
             # expect seeing newsfeed page
             self.assertTrue(self.sociushelper.is_newsfeed())
             displayName, soociiId = self.sociushelper.get_personal_info()
