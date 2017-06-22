@@ -72,18 +72,30 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # logout confirmation
         self.click_button_with_text(["Logout", u"登出"])
 
-    def skip_guide_mark(self):
-        # wait login transition
-        self.wait_transition(1)
+    def click_require_permission_button(self):
+        self.click_textview_with_text(u"確認")
 
-        el = self.wait.until(EC.presence_of_element_located((By.ID, "guide")))
+    def skip_floating_ball_guide_mark(self):
+        el = self.wait.until(EC.presence_of_element_located((By.ID, "permission_video")))
         self.assertIsNotNone(el)
 
-        # tap on screen 4 times
+        # tap on screen to skip
         center_x = self.window_size["width"] / 2
         center_y = self.window_size["height"] / 2
-        for i in range(1, 5):
-            self.driver.tap([(center_x, center_y)], 500)
+        self.driver.tap([(center_x, center_y)], 500)
+
+    # def skip_guide_mark(self):
+    #     # wait login transition
+    #     self.wait_transition(1)
+    #
+    #     el = self.wait.until(EC.presence_of_element_located((By.ID, "guide")))
+    #     self.assertIsNotNone(el)
+    #
+    #     # tap on screen 4 times
+    #     center_x = self.window_size["width"] / 2
+    #     center_y = self.window_size["height"] / 2
+    #     for i in range(1, 5):
+    #         self.driver.tap([(center_x, center_y)], 500)
 
     def login_account(self, email, pwd):
         self.send_text_with_id("email_value", email)
@@ -125,11 +137,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def is_discover(self):
+        return self.__visibility_of_textview(["Discover", u"探索"])
+
     def is_newsfeed(self):
         return self.__visibility_of_textview(["Newsfeed", u"即時動態"])
 
-    def is_friendlist(self):
-        return self.__visibility_of_textview(["Friends", u"好友頻道"])
+    # def is_friendlist(self):
+    #     return self.__visibility_of_textview(["Friends", u"好友頻道"])
 
     def is_aboutme(self):
         return self.__visibility_of_textview(["Me", u"關於我"])
@@ -141,15 +156,16 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return
 
     def swipe_to_aboutme(self):
-        if self.is_aboutme():
-            pass
-        elif self.is_newsfeed():
-            self.swipe_left()
-            self.swipe_left()
-        elif self.is_frindlist():
-            self.swipe_left()
-        else:
-            raise NoSuchElementException('could not identify [aboutme] page')
+        # if self.is_aboutme():
+        #     pass
+        self.click_textview_with_id("icon_profile")
+        # elif self.is_discover():
+        #     self.swipe_left()
+        #     self.swipe_left()
+        # elif self.is_newsfeed():
+        #     self.swipe_left()
+        # else:
+        #     raise NoSuchElementException('could not identify [aboutme] page')
 
     def get_personal_info(self):
         self.swipe_to_aboutme()

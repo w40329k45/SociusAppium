@@ -61,6 +61,20 @@ class AppiumBaseHelper():
         btn.click()
         return  True
 
+    def click_textview_with_text(self, text):
+        allTxtViews = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for txtView in allTxtViews:
+            if txtView.text in text:
+                txtView.click()
+                return True
+        return False
+
+    def click_textview_with_id(self, id):
+        txtView = self.wait.until(EC.presence_of_element_located((By.ID, id)))
+        if txtView is None: return False
+        txtView.click()
+        return True
+
     def send_text_with_id(self, id, text):
         field = self.wait.until(EC.presence_of_element_located((By.ID, id)))
         field.clear()
@@ -75,7 +89,7 @@ class AppiumBaseHelper():
     def swipe_left(self):
         left_x = self.window_size["width"] * 0.1
         right_x = self.window_size["width"] * 0.9
-        center_y = self.window_size["height"] * 0.5
+        center_y = self.window_size["height"] * 0.8
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
 

@@ -60,16 +60,30 @@ class FacebookAccountTests(BaseTests):
         try:
             expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
             expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+
             # Facebook Login button on Soocii
             self.sociushelper.click_facebook_login_button()
-
             self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
-            self.syshelper.allow_system_permissions()
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            # allow all system permissions
+            self.syshelper.allow_system_permissions(4)
+
+            # skip floating ball guide mark
+            self.sociushelper.skip_floating_ball_guide_mark()
+
             # only need to enable usage access once
             self.syshelper.enable_usage_access()
+
+            # only need to enable draw on top layer once
+            self.syshelper.enable_draw_on_top_layer()
+
             #self.sociushelper.skip_guide_mark()
-            # expect seeing newsfeed page
-            self.assertTrue(self.sociushelper.is_newsfeed())
+
+            # expect seeing discover page
+            self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))

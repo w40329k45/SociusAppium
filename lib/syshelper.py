@@ -79,21 +79,21 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
 
     # support for sony z3, samsung note5
     def __enable_usage_access_sony_z3(self):
-        try:
-            # try tap on "Continue"
-            x = self.window_size["width"] * 0.5
-
-            y = self.window_size["height"] * 0.80
-            self.driver.tap([(x, y)], 500)
-
-            y = self.window_size["height"] * 0.85
-            self.driver.tap([(x, y)], 500)
-
-            y = self.window_size["height"] * 0.9
-            self.driver.tap([(x, y)], 500)
-        except WebDriverException:
-            # continue with expected exception
-            pass
+        # try:
+        #     # try tap on "Continue"
+        #     x = self.window_size["width"] * 0.5
+        #
+        #     y = self.window_size["height"] * 0.80
+        #     self.driver.tap([(x, y)], 500)
+        #
+        #     y = self.window_size["height"] * 0.85
+        #     self.driver.tap([(x, y)], 500)
+        #
+        #     y = self.window_size["height"] * 0.9
+        #     self.driver.tap([(x, y)], 500)
+        # except WebDriverException:
+        #     # continue with expected exception
+        #     pass
 
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
@@ -138,8 +138,9 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 raise NoSuchElementException('could not identify confirmation dialog')
 
     def enable_usage_access(self):
-        # wait for tutorial
-        self.wait_transition(3)
+        # click on confirm "請選擇Soocii，並將可存取使用情形打開"
+        self.click_textview_with_id("confirm")
+
         try:
             self.logger.info('try enable usage access in sony m4')
             self.__enable_usage_access_sony_m4()
@@ -151,7 +152,22 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
             except:
                 raise
 
-    def allow_system_permissions(self):
+    def enable_draw_on_top_layer(self):
+        # click on confirm "請選擇允許在其他應用程式上層繪製內容，並將其打開"
+        self.click_textview_with_id("confirm")
+
+        # draw on top layer permission
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'text of located element: {}'.format(el.text))
+            el.click()
+
+        # Back to Soccii App
+        self.press_back_key()
+        self.logger.info('enabled draw on top layer')
+        return True
+
+    def allow_system_permissions(self, max_counts=1):
         wait_time = 5
         wait = WebDriverWait(self.driver, wait_time)
         try:
@@ -163,7 +179,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                     if el.text in ["Allow", u"允許"]:
                         el.click()
                         break
-                if count > 5:
+                if count > max_counts:
                     raise TimeoutException()
                 count = count + 1
                 # decrease wait time
