@@ -101,12 +101,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # email_value
         if email is not None:
             self.send_text_with_id("email_value", email)
-            self.send_text_with_id("email_confirm_value", email if confirmEmail is None else confirmEmail)
+            #self.send_text_with_id("email_confirm_value", email if confirmEmail is None else confirmEmail)
             self.logger.info('sent email: {}'.format(email))
         # password_value
         if pwd is not None:
             self.send_text_with_id("password_value", pwd)
-            self.send_text_with_id("password_confirm_value", pwd if confirmPwd is None else confirmPwd)
+            #self.send_text_with_id("password_confirm_value", pwd if confirmPwd is None else confirmPwd)
             self.logger.info('sent password: {}'.format(pwd))
         self.click_button_with_id("register")
         # transition to next page

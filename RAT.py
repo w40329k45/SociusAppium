@@ -123,7 +123,7 @@ class FacebookAccountTests(BaseTests):
             # allow all system permissions
             self.syshelper.allow_system_permissions(4)
 
-            # expect seeing newsfeed page
+            # expect seeing discover page
             self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
@@ -157,15 +157,21 @@ class EmailAccountTests(BaseTests):
             # Create new account button on Soocii
             self.sociushelper.click_create_new_account_using_email_button()
 
+            # flow to create new account
             self.sociushelper.create_account(
                 accounthelper.name,
                 accounthelper.name,
                 accounthelper.email,
                 "password1234")
-            self.syshelper.allow_system_permissions()
-            #self.sociushelper.skip_guide_mark()
-            # expect seeing newsfeed page
-            self.assertTrue(self.sociushelper.is_newsfeed())
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            # allow all system permissions
+            self.syshelper.allow_system_permissions(4)
+
+            # expect seeing discover page
+            self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(accounthelper.name==displayName,
                             u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
