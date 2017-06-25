@@ -84,19 +84,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         center_y = self.window_size["height"] / 2
         self.driver.tap([(center_x, center_y)], 500)
 
-    # def skip_guide_mark(self):
-    #     # wait login transition
-    #     self.wait_transition(1)
-    #
-    #     el = self.wait.until(EC.presence_of_element_located((By.ID, "guide")))
-    #     self.assertIsNotNone(el)
-    #
-    #     # tap on screen 4 times
-    #     center_x = self.window_size["width"] / 2
-    #     center_y = self.window_size["height"] / 2
-    #     for i in range(1, 5):
-    #         self.driver.tap([(center_x, center_y)], 500)
-
     def login_account(self, email, pwd):
         self.send_text_with_id("email_value", email)
         self.logger.info('sent email: {}'.format(email))

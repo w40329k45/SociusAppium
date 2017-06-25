@@ -73,7 +73,7 @@ class FacebookAccountTests(BaseTests):
             # allow all system permissions
             self.syshelper.allow_system_permissions(4)
 
-            # skip floating ball guide mark
+            # only need to skip floating ball guide mark once
             self.sociushelper.skip_floating_ball_guide_mark()
 
             # only need to enable usage access once
@@ -111,14 +111,20 @@ class FacebookAccountTests(BaseTests):
 
             # Facebook Login button on Soocii
             self.sociushelper.click_facebook_login_button()
-
             self.syshelper.login_facebook_account(config.NEW_FACEBOOK_ACCOUNT1, config.NEW_FACEBOOK_ACCOUNT1_PWD)
+
+            # flow to create new account
             self.sociushelper.create_account(expectedDisplayName, expectedSoociiId)
             self.sociushelper.add_followers()
-            self.syshelper.allow_system_permissions()
-            #self.sociushelper.skip_guide_mark()
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            # allow all system permissions
+            self.syshelper.allow_system_permissions(4)
+
             # expect seeing newsfeed page
-            self.assertTrue(self.sociushelper.is_newsfeed())
+            self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))

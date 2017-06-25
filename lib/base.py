@@ -55,6 +55,7 @@ class AppiumBaseHelper():
                 if btn.text.strip() in text:
                     btn.click()
                     return True
+            # support attribute for content-desc
             if btn.get_attribute('name'):
                 if btn.get_attribute('name').strip() in text:
                     btn.click()
