@@ -5,17 +5,21 @@
 ## 環境
 
 * [Android Studio 2.0](https://developer.android.com/studio/index.html)
+    * Install Android SDK 5.1 ~ 7.1.1
+    * ![Android SDK](https://github.com/drmobile/SociusAppium/raw/master/images/AndroidStudioSDK.png)
 * Python 2.7
     * pip 9.0.1
     * pip install -r requirement.txt
 * [Appium](http://appium.io/)
+    * General Setting > Environment Variables 新增 ANDROID_HOME
+    * ![Appium Env Variables](https://github.com/drmobile/SociusAppium/raw/master/images/AppiumEnvVariables.png)
 * [Android File Transfer](https://www.android.com/filetransfer/)
 * OSX 環境變數
 
 ```shell
 export ANDROID_HVPROTO=ddm
 export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
-export ANDROID_HOME=/Users/jonas/Library/Android/sdk/
+export ANDROID_HOME=/Users/<user>/Library/Android/sdk/
 export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin"
 ```
 
@@ -27,6 +31,18 @@ export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/b
 
 * Appium Inspector
     * a tool to inspect app resource id, class name, text and xpath
+
+> [APPIUM TIP #13: USE INSPECTOR OR UIAUTOMATORVIEWER FOR UI ELEMENT INSPECTION](https://bitbar.com/appium-tip-13-use-inspector-or-uiautomatorviewer-for-ui-element-inspection/)
+
+### Appium Inspector 基本操作
+
+* 設定 App Path 指向 APK 位置
+* 設定 Package 資訊
+* 設定 Platform Version
+* 設定 Device Name
+* ![Appium Android Settings](https://github.com/drmobile/SociusAppium/raw/master/images/AppiumAndroidSettings.png)
+
+> 透過 ```adb devices``` 取得 Device Name
 
 ## 執行
 
