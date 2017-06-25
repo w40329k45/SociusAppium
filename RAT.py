@@ -47,6 +47,8 @@ class BaseTests(unittest.TestCase):
         self.sociushelper = SociusHelper(self.driver)
 
     def tearDown(self):
+        # TODO: reset keyboard
+
         # remove app
         self.driver.close_app()
 
@@ -79,8 +81,6 @@ class FacebookAccountTests(BaseTests):
 
             # only need to enable draw on top layer once
             self.syshelper.enable_draw_on_top_layer()
-
-            #self.sociushelper.skip_guide_mark()
 
             # expect seeing discover page
             self.assertTrue(self.sociushelper.is_discover())

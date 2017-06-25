@@ -34,9 +34,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # Click on "Soocii Logger" or expand Soocii notification
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
-            print el.text
+            self.logger.info('Check text view: {}'.format(el.text))
             if el.text == "Soocii Logger":
-                print "Soocii Logger"
+                self.logger.info('Found text view: {}'.format(el.text))
                 el.click()
                 self.wait_transition(1)
                 return
