@@ -89,6 +89,7 @@ class FacebookAccountTests(BaseTests):
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
             self.assertTrue(expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+
             # switch to home and back to soocii
             self.syshelper.press_home_key()
             self.syshelper.start_soocii()
@@ -130,6 +131,7 @@ class FacebookAccountTests(BaseTests):
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
             self.assertTrue(expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
+
             # switch to home and back to soocii
             self.syshelper.press_home_key()
             self.syshelper.start_soocii()
@@ -177,6 +179,7 @@ class EmailAccountTests(BaseTests):
                             u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
             self.assertTrue(accounthelper.name==soociiId,
                             u"expect value {}, but return unexpected {}".format(accounthelper.name, soociiId))
+
             # switch to home and back to soocii
             self.syshelper.press_home_key()
             self.syshelper.start_soocii()
@@ -201,24 +204,31 @@ class EmailAccountTests(BaseTests):
             # Create new account button on Soocii
             self.sociushelper.click_create_new_account_using_email_button()
 
+            # flow to create new account
             self.sociushelper.create_account(
                 accounthelper.name,
                 accounthelper.name,
                 accounthelper.email,
                 "password1234")
-            self.syshelper.allow_system_permissions()
-            #self.sociushelper.skip_guide_mark()
-            # expect seeing newsfeed page
-            self.assertTrue(self.sociushelper.is_newsfeed())
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            # allow all system permissions
+            self.syshelper.allow_system_permissions(4)
+
+            # expect seeing discover page
+            self.assertTrue(self.sociushelper.is_discover())
+
             # logout
             self.sociushelper.click_logout_button()
 
             # login with the same account again
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account(accounthelper.email, "password1234")
-            #self.sociushelper.skip_guide_mark()
-            # expect seeing newsfeed page
-            self.assertTrue(self.sociushelper.is_newsfeed())
+
+            # expect seeing discover page
+            self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(accounthelper.name==displayName,
                             u"expect value {}, but return unexpected {}".format(accounthelper.name, displayName))
