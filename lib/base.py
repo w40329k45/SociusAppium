@@ -50,9 +50,15 @@ class AppiumBaseHelper():
     def click_button_with_text(self, text):
         allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
         for btn in allBtns:
-            if btn.text in text:
-                btn.click()
-                return True
+            self.logger.info(u'Check button: {} ({})'.format(btn.text, btn.get_attribute('name')))
+            if btn.text:
+                if btn.text.strip() in text:
+                    btn.click()
+                    return True
+            if btn.get_attribute('name'):
+                if btn.get_attribute('name').strip() in text:
+                    btn.click()
+                    return True
         return False
 
     def click_button_with_id(self, id):

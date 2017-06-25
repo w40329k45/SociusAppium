@@ -15,6 +15,7 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
 
     def login(self, username, password):
         bClickedLogin = False
+        bGrantedPermission = False
 
         # wait login transition
         self.wait_transition(1)
@@ -34,29 +35,25 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
         el.send_keys(password)
         self.driver.hide_keyboard()
 
-        allBtns = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-        for el in allBtns:
-            self.logger.info(u'text of located element: {}'.format(el.get_attribute('name')))
-            if el.get_attribute('name').strip() in [u"登入"]:
-                el.click()
-                bClickedLogin = True
-                break
+        self.logger.info('Try to locate facebook login button by text')
+        if self.click_button_with_text([u'登入']) == True:
+            bClickedLogin = True
         if bClickedLogin is False: raise NoSuchElementException('could not identify facebook login button in the page')
 
         # wait for loading
         self.wait_transition(1)
 
         # grant facebook permission
-        try:
-            # Not grant facebook permission yet
-            xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.widget.Button[1]"
-            btn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-            btn.click()
-        except:
-            # Has granted facebook permission
-            xpath = "//android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.LinearLayout[1]/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[2]/android.view.View[2]/android.view.View[1]/android.view.View[1]/android.view.View[1]/android.view.View[2]/android.view.View[1]/android.view.View[2]/android.widget.Button[1]"
-            btn = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-            btn.click()
+        self.logger.info('Try to locate facebook permission button by text')
+        if self.click_button_with_text([u'繼續', u'確定']) == True:
+            bGrantedPermission = True
+        if bGrantedPermission is False: raise NoSuchElementException('could not identify facebook grant permission button in the page')
+
+        # wait for loading
+        self.wait_transition(1)
+
+        return True
+
 
 class SysHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver):
