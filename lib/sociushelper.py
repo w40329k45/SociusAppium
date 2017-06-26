@@ -95,7 +95,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.logger.info('sent password: {}'.format(pwd))
         self.click_button_with_id("login")
         # transition to next page
-        self.wait_transition(0.5)
+        self.wait_transition(1)
 
     def create_account(self, displayName, soociiId, email=None, pwd=None, confirmEmail=None, confirmPwd=None):
         self.send_text_with_id("display_name_value", displayName)
@@ -114,7 +114,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             self.logger.info('sent password: {}'.format(pwd))
         self.click_button_with_id("register")
         # transition to next page
-        self.wait_transition(0.5)
+        self.wait_transition(1)
 
     def add_followers(self):
         self.click_button_with_id("add_follow_confirm")

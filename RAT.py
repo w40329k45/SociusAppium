@@ -41,7 +41,6 @@ class BaseTests(unittest.TestCase):
     def setUp(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
-        #desired_caps['platformVersion'] = config.PLATFORM_VERION
         desired_caps['platformVersion'] = getDeviceProp('build.version.release')
         desired_caps['deviceName'] = 'Android Emulator'
         desired_caps['unicodeKeyboard'] = True
