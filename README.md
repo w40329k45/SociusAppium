@@ -55,8 +55,6 @@ export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/b
 #coding=utf-8
 
 # Test environment
-PLATFORM_VERION='6.0.1'
-#PLATFORM_VERION='5.0'
 PATH_TO_TEST_APK='soocii_xxx_staging.apk'
 
 # Login with existing account and enable usage access once
@@ -90,9 +88,11 @@ py.test -x RAT.py
 py.test -x RAT.py::SociusTests::test_login_new_facebook_account
 ```
 
-### 視作業系統版本調整 PLATFORM_VERSION
+## 附錄
 
-當你執行中發現以下類似的錯誤時，請同步調整 config.py 中的 PLATFORM_VERSION，以下面的錯誤訊息為例，請設定為 5.0.2
+### 視作業系統版本調整 Platform Version
+
+當你執行中發現以下類似的錯誤時，請同步 Platform Version，以下面的錯誤訊息為例，請設定為 5.0.2
 
 ```console
 [AndroidDriver] Error: Unable to find an active device or emulator with OS 6.0.1. The following are available: LC57WYP03147 (5.0.2)

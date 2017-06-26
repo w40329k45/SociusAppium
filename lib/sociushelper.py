@@ -3,13 +3,12 @@ import unittest
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
 
 from base import AppiumBaseHelper
 
 class SociusHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver):
-        AppiumBaseHelper.__init__(self, driver)
+    def __init__(self, driver, platformName, platformVersion):
+        AppiumBaseHelper.__init__(self, driver, platformName, platformVersion)
 
     def click_facebook_login_button(self):
         self.click_button_with_id("btn_fb_login")
@@ -73,7 +72,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_button_with_text(["Logout", u"登出"])
 
     def click_require_permission_button(self):
+        # only require for Android6+
+        if self.isAndroid5():
+            return
         self.click_textview_with_text(u"確認")
+        # allow all system permissions
+        self.allow_system_permissions(4)
 
     def skip_floating_ball_guide_mark(self):
         el = self.wait.until(EC.presence_of_element_located((By.ID, "permission_video")))
@@ -130,9 +134,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def is_newsfeed(self):
         return self.__visibility_of_textview(["Newsfeed", u"即時動態"])
 
-    # def is_friendlist(self):
-    #     return self.__visibility_of_textview(["Friends", u"好友頻道"])
-
     def is_aboutme(self):
         return self.__visibility_of_textview(["Me", u"關於我"])
 
@@ -143,16 +144,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return
 
     def swipe_to_aboutme(self):
-        # if self.is_aboutme():
-        #     pass
         self.click_textview_with_id("icon_profile")
-        # elif self.is_discover():
-        #     self.swipe_left()
-        #     self.swipe_left()
-        # elif self.is_newsfeed():
-        #     self.swipe_left()
-        # else:
-        #     raise NoSuchElementException('could not identify [aboutme] page')
 
     def get_personal_info(self):
         self.swipe_to_aboutme()

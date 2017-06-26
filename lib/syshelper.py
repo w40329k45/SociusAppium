@@ -2,16 +2,15 @@
 import sys
 import unittest
 
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 
 from base import AppiumBaseHelper
 
 class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver):
-        AppiumBaseHelper.__init__(self, driver)
+    def __init__(self, driver, platformName, platformVersion):
+        AppiumBaseHelper.__init__(self, driver, platformName, platformVersion)
 
     def login(self, username, password):
         bClickedLogin = False
@@ -56,9 +55,9 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
 
 
 class SysHelper(unittest.TestCase, AppiumBaseHelper):
-    def __init__(self, driver):
-        AppiumBaseHelper.__init__(self, driver)
-        self.fb = FacebookHelper(driver)
+    def __init__(self, driver, platformName, platformVersion):
+        AppiumBaseHelper.__init__(self, driver, platformName, platformVersion)
+        self.fb = FacebookHelper(driver, platformName, platformVersion)
 
     def start_soocii(self):
         # The function does not work due to missing android:exported=”true” for the activity
@@ -76,22 +75,6 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
 
     # support for sony z3, samsung note5
     def __enable_usage_access_sony_z3(self):
-        # try:
-        #     # try tap on "Continue"
-        #     x = self.window_size["width"] * 0.5
-        #
-        #     y = self.window_size["height"] * 0.80
-        #     self.driver.tap([(x, y)], 500)
-        #
-        #     y = self.window_size["height"] * 0.85
-        #     self.driver.tap([(x, y)], 500)
-        #
-        #     y = self.window_size["height"] * 0.9
-        #     self.driver.tap([(x, y)], 500)
-        # except WebDriverException:
-        #     # continue with expected exception
-        #     pass
-
         # Usage access permission
         items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
         for el in items:
@@ -163,31 +146,6 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
         self.logger.info('enabled draw on top layer')
         return True
-
-    def allow_system_permissions(self, max_counts=1):
-        wait_time = 5
-        wait = WebDriverWait(self.driver, wait_time)
-        try:
-            count = 1
-            while True:
-                allBtns = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
-                if len(allBtns) == 0: return
-                for el in allBtns:
-                    if el.text in ["Allow", u"允許"]:
-                        el.click()
-                        break
-                if count > max_counts:
-                    raise TimeoutException()
-                count = count + 1
-                # decrease wait time
-                wait_time = wait_time / 2 if wait_time > 2 else 1
-                wait = WebDriverWait(self.driver, wait_time)
-        except TimeoutException:
-            # continue with expected exception
-            pass
-        except NoSuchElementException:
-            # continue with expected exception
-            pass
 
     def login_facebook_account(self, username, password):
         self.logger.info('username: {}, password: {}'.format(username, password))

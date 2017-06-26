@@ -1,9 +1,11 @@
 #coding=utf-8
 import os
+import re
 import sys
-import logging
 import pytest
+import logging
 import unittest
+import subprocess
 
 from appium import webdriver
 
@@ -26,11 +28,21 @@ ch.setFormatter(logFormatter)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
+def getDeviceProp(prop):
+    p1 = subprocess.Popen(['adb', 'shell', 'getprop'], stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(['grep', prop], stdin=p1.stdout, stdout=subprocess.PIPE)
+    p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+    line = p2.communicate()[0]
+    # parse value
+    p = re.compile('\[ro.{}\]: \[(.+)\]'.format(prop))
+    return p.findall(line)[0]
+
 class BaseTests(unittest.TestCase):
     def setUp(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
-        desired_caps['platformVersion'] = config.PLATFORM_VERION
+        #desired_caps['platformVersion'] = config.PLATFORM_VERION
+        desired_caps['platformVersion'] = getDeviceProp('build.version.release')
         desired_caps['deviceName'] = 'Android Emulator'
         desired_caps['unicodeKeyboard'] = True
         desired_caps['resetKeyboard'] = True
@@ -43,8 +55,8 @@ class BaseTests(unittest.TestCase):
         self.driver.implicitly_wait(5)
         self.logger = logging.getLogger()
 
-        self.syshelper = SysHelper(self.driver)
-        self.sociushelper = SociusHelper(self.driver)
+        self.syshelper = SysHelper(self.driver, desired_caps['platformName'], desired_caps['platformVersion'])
+        self.sociushelper = SociusHelper(self.driver, desired_caps['platformName'], desired_caps['platformVersion'])
 
     def tearDown(self):
         # TODO: reset keyboard
@@ -69,9 +81,6 @@ class FacebookAccountTests(BaseTests):
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
-
-            # allow all system permissions
-            self.syshelper.allow_system_permissions(4)
 
             # only need to skip floating ball guide mark once
             self.sociushelper.skip_floating_ball_guide_mark()
@@ -121,9 +130,6 @@ class FacebookAccountTests(BaseTests):
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
-            # allow all system permissions
-            self.syshelper.allow_system_permissions(4)
-
             # expect seeing discover page
             self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
@@ -169,9 +175,6 @@ class EmailAccountTests(BaseTests):
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
-            # allow all system permissions
-            self.syshelper.allow_system_permissions(4)
-
             # expect seeing discover page
             self.assertTrue(self.sociushelper.is_discover())
             displayName, soociiId = self.sociushelper.get_personal_info()
@@ -213,9 +216,6 @@ class EmailAccountTests(BaseTests):
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
-
-            # allow all system permissions
-            self.syshelper.allow_system_permissions(4)
 
             # expect seeing discover page
             self.assertTrue(self.sociushelper.is_discover())

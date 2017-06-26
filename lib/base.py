@@ -5,6 +5,9 @@ from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
+from packaging import version
 
 # app name
 APP_NAME="Soocii-staging"
@@ -14,12 +17,14 @@ PACKAGE_NAME="me.soocii.socius.staging"
 WAIT_TIME=5
 
 class AppiumBaseHelper():
-    def __init__(self, driver):
+    def __init__(self, driver, platformName, platformVersion):
         assert driver is not None
         self.logger = logging.getLogger()
         self.driver = driver
         self.window_size = self.driver.get_window_size()
         self.wait = WebDriverWait(self.driver, WAIT_TIME)
+        self.platformName = platformName
+        self.platformVersion = platformVersion
 
     @property
     def app_name(self):
@@ -28,6 +33,12 @@ class AppiumBaseHelper():
     @property
     def package_name(self):
         return PACKAGE_NAME
+
+    def isAndroid5(self):
+        if self.platformName == 'Android':
+            if version.parse(self.platformVersion) >= version.parse('5.0.0') and version.parse(self.platformVersion) < version.parse('6.0.0'):
+                return True
+        return False
 
     def wait_transition(self, wait_time):
         sleep(float(wait_time))
@@ -108,7 +119,6 @@ class AppiumBaseHelper():
         self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
 
-
     def get_text_with_id(self, id):
         text = self.wait.until(EC.presence_of_element_located((By.ID, id)))
         return text.text
@@ -117,3 +127,28 @@ class AppiumBaseHelper():
         self.driver.save_screenshot(prefix+'_screenshot.png')
         with open(prefix+"_page_source.xml", "w") as xml_file:
             xml_file.write(self.driver.page_source.encode('utf8'))
+
+    def allow_system_permissions(self, max_counts=1):
+        wait_time = 5
+        wait = WebDriverWait(self.driver, wait_time)
+        try:
+            count = 1
+            while True:
+                allBtns = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.Button")))
+                if len(allBtns) == 0: return
+                for el in allBtns:
+                    if el.text in ["Allow", u"允許"]:
+                        el.click()
+                        break
+                if count > max_counts:
+                    raise TimeoutException()
+                count = count + 1
+                # decrease wait time
+                wait_time = wait_time / 2 if wait_time > 2 else 1
+                wait = WebDriverWait(self.driver, wait_time)
+        except TimeoutException:
+            # continue with expected exception
+            pass
+        except NoSuchElementException:
+            # continue with expected exception
+            pass
