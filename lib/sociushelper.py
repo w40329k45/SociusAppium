@@ -129,7 +129,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return False
 
     def is_discover(self):
-        return self.__visibility_of_textview(["Discover", u"探索"])
+        return self.__visibility_of_textview(["Discovery", u"探索"])
 
     def is_newsfeed(self):
         return self.__visibility_of_textview(["Newsfeed", u"即時動態"])
