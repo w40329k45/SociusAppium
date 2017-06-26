@@ -46,6 +46,7 @@ export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/b
 
 ## 執行
 
+* 目前測試僅支援 WebView 型態的臉書登入介面，請先將 Facebook App 移出或內建的 App 停用
 * 將 config.py 複製至 Readme.md 相同路徑
 
 以下是範例，請接洽主管取得此設定檔
@@ -88,3 +89,17 @@ py.test -x RAT.py
 # single test case
 py.test -x RAT.py::SociusTests::test_login_new_facebook_account
 ```
+
+### 視作業系統版本調整 PLATFORM_VERSION
+
+當你執行中發現以下類似的錯誤時，請同步調整 config.py 中的 PLATFORM_VERSION，以下面的錯誤訊息為例，請設定為 5.0.2
+
+```console
+[AndroidDriver] Error: Unable to find an active device or emulator with OS 6.0.1. The following are available: LC57WYP03147 (5.0.2)
+    at Object.wrappedLogger.errorAndThrow (lib/logger.js:60:13)
+..............................................................
+ [Error: Unable to find an active device or emulator with OS 6.0.1. The following are available: LC57WYP03147 (5.0.2)]
+```
+
+![Platform Version Not Matched](https://github.com/drmobile/SociusAppium/raw/master/images/PlatformVersionNotMatched.png)
+
