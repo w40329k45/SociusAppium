@@ -17,11 +17,11 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
         bGrantedPermission = False
 
         # wait login transition
-        self.wait_transition(1)
+        self.wait_transition(2)
 
         # Webview-based
         allEditText = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.EditText")))
-        self.assertTrue(len(allEditText)==2)
+        self.assertTrue(len(allEditText)==2, 'could not identify facebook two text fields for user name and password')
         self.assertIsNotNone(allEditText)
         # User name field
         el = allEditText[0]
@@ -37,16 +37,16 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
         self.logger.info('Try to locate facebook login button by text')
         if self.click_button_with_text([u'登入']) == True:
             bClickedLogin = True
-        if bClickedLogin is False: raise NoSuchElementException('could not identify facebook login button in the page')
+        self.assertTrue(bClickedLogin, 'could not identify facebook login button in the page')
 
         # wait for loading
-        self.wait_transition(1)
+        self.wait_transition(2)
 
         # grant facebook permission
         self.logger.info('Try to locate facebook permission button by text')
         if self.click_button_with_text([u'繼續', u'確定']) == True:
             bGrantedPermission = True
-        if bGrantedPermission is False: raise NoSuchElementException('could not identify facebook grant permission button in the page')
+        self.assertTrue(bGrantedPermission, 'could not identify facebook grant permission button in the page')
 
         # wait for loading
         self.wait_transition(1)
@@ -104,15 +104,11 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 # 1st level of setting
                 el.click()
                 # Confirmation
-                self.logger.info('identify confirmation dialog')
-                el = self.wait.until(EC.presence_of_element_located((By.ID, "alertTitle")))
-                self.logger.info('identified confirmation dialog')
-                if el is not None:
-                    if self.click_button_with_text(["OK", u"確定"]) is True:
-                        # Back to Soccii App
-                        self.press_back_key()
-                        self.logger.info('enabled usage access in sony m4')
-                        return True
+                if self.click_button_with_text(["OK", u"確定"]) is True:
+                    # Back to Soccii App
+                    self.press_back_key()
+                    self.logger.info('enabled usage access in sony m4')
+                    return True
                 # could not identify alert dialog
                 self.logger.info('could not identify confirmation dialog')
                 raise NoSuchElementException('could not identify confirmation dialog')
@@ -121,19 +117,29 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
         # click on confirm "請選擇Soocii，並將可存取使用情形打開"
         self.click_textview_with_id("confirm")
 
-        try:
-            self.logger.info('try enable usage access in sony m4')
+        if self.isAndroid5() == True:
+            self.logger.info('try enable usage access in Android 5')
             self.__enable_usage_access_sony_m4()
-        except:
-            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            try:
-                self.logger.info('try enable usage access in sony z3, samsung note5')
-                self.__enable_usage_access_sony_z3()
-            except:
-                raise
+        else:
+            self.logger.info('try enable usage access in Android 6+')
+            self.__enable_usage_access_sony_z3()
+
+        # try:
+        #     self.logger.info('try enable usage access in sony m4')
+        #     self.__enable_usage_access_sony_m4()
+        # except:
+        #     self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+        #     try:
+        #         self.logger.info('try enable usage access in sony z3, samsung note5')
+        #         self.__enable_usage_access_sony_z3()
+        #     except:
+        #         raise
 
     def enable_draw_on_top_layer(self):
         # click on confirm "請選擇允許在其他應用程式上層繪製內容，並將其打開"
+        # only require for Android6+
+        if self.isAndroid5():
+            return
         self.click_textview_with_id("confirm")
 
         # draw on top layer permission
