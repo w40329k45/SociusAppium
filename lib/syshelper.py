@@ -40,7 +40,7 @@ class FacebookHelper(unittest.TestCase, AppiumBaseHelper):
         self.assertTrue(bClickedLogin, 'could not identify facebook login button in the page')
 
         # wait for loading
-        self.wait_transition(2)
+        self.wait_transition(4)
 
         # grant facebook permission
         self.logger.info('Try to locate facebook permission button by text')
