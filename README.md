@@ -76,6 +76,8 @@ NEW_FACEBOOK_ACCOUNT1_SOOCIIID="test2.qa1"
 PATH_TO_TEST_APK='soocii_xxx_staging.apk'
 ```
 
+* **確認 Android 裝置已經開啟開發人員相關的設定，每種廠牌機型各有差異**
+
 * 透過 USB 連接 Android 裝置
     * Use ```adb devices``` to make sure the device is connected
 
