@@ -75,9 +75,21 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # only require for Android6+
         if self.isAndroid5():
             return
-        self.click_textview_with_text(u"確認")
+        self.click_textview_with_text(u"確認","Confirm")
         # allow all system permissions
         self.allow_system_permissions(4)
+
+    def click_onlinevideocard(self):
+        self.click_button_with_id("iv_thumbnail")
+        self.wait_transition(2)
+        self.press_back_key()
+
+    def click_videocard(self):
+        self.swipe_loading()
+        self.swipe_loading()
+        self.click_button_with_id("iv_video_play")
+        self.wait_transition(2)
+        self.press_back_key()
 
     def skip_floating_ball_guide_mark(self):
         el = self.wait.until(EC.presence_of_element_located((By.ID, "permission_video")))
@@ -137,14 +149,47 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def is_aboutme(self):
         return self.__visibility_of_textview(["Me", u"關於我"])
 
+    def swipe_discover(self):
+        self.click_button_with_id("tv_discovery")
+        self.wait_transition(1)
+        return
+
     def swipe_to_newsfeed(self):
+        self.click_button_with_id("tv_feed")
         return
 
     def swipe_to_friendlist(self):
+        self.click_button_with_id("iv_invite_icon")
         return
 
     def swipe_to_aboutme(self):
         self.click_textview_with_id("icon_profile")
+
+    def swipe_to_support(self):
+        self.click_button_with_id("iv_help_icon")
+
+    def swipe_to_fans(self):
+        self.click_textview_with_text([u"粉絲","Follower"]) 
+
+    def swipe_to_suggest(self):
+        self.click_textview_with_text(["Suggest",u"用戶推薦"]) 
+           
+    def swipe_to_SearchId(self):
+        self.click_textview_with_text([u"ID搜尋","ID Search"])
+
+    def swipe_refresh(self):
+        self.swipe_down()
+
+    def swipe_loading(self):
+        self.swipe_up()
+
+    def get_newsfeed_info(self):
+        self.swipe_to_newsfeed()
+        feedcard = self.wait.until(EC.presence_of_all_elements_located((By.ID,"ll_post_card")))
+        if feedcard is None:
+            return False
+        else:
+            return True
 
     def get_personal_info(self):
         self.swipe_to_aboutme()
@@ -154,3 +199,72 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # go back to main page
         self.press_back_key()
         return displayName, soociiId
+
+    def get_friendlist_info(self):
+        self.swipe_to_friendlist()
+        friends_video = self.wait.until(EC.presence_of_all_elements_located((By.ID, "video")))
+        if friends_video is None:
+         return False
+        else:
+            return True
+
+    def get_idsearch(self):
+        self.send_text_with_id("input_soocii_id_text","scheng1")
+        self.wait_transition(1.5)
+        self.press_back_key()
+
+    def get_videocard(self):
+        videocard=self.wait.until(EC.presence_of_element_located((By.ID,"iv_video_play")))
+        if videocard is None:
+            return False
+        else:
+            return True
+
+    def check_aboutme(self,exdisplayname):
+        self.swipe_to_aboutme()
+        displayName = self.get_text_with_id("tv_display_name")
+        if exdisplayname in displayName:
+            return True
+        else:
+            return False
+    def check_support(self):
+        self.swipe_to_support()
+        supportname = self.get_text_with_id("tv_display_name")
+        if "Support" in supportname:
+            self.press_back_key()
+            return True
+        else:
+            return False
+
+    def check_suggest(self):
+        self.swipe_to_suggest()
+        suggestbutton =self.wait.until(EC.presence_of_all_elements_located((By.ID,"facebook_invite")))
+        if suggestbutton is None:
+            return False
+        else:
+            return True
+
+    def check_hashtag(self):
+        tagtext=self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+
+        i=0
+        for  el in tagtext:
+            self.click_textview_with_text(el.text)
+            self.wait_transition(2)
+            i=i+1
+            videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
+            vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
+            if len(videonum)<4:
+                return False
+            # for al in vtag:
+            #     if el.text != al.text:
+            #         return False
+            self.press_back_key()
+            if i == 2:
+                self.swipe_hash()
+                i=0
+                self.wait_transition(2)
+        return True
+
+
+
