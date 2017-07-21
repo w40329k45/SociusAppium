@@ -87,7 +87,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def click_videocard(self):
         self.swipe_loading()
         self.swipe_loading()
-        self.click_button_with_id("iv_video_play")
+        self.click_button_with_id("rl_post_card")
         self.wait_transition(2)
         self.press_back_key()
 
@@ -149,7 +149,20 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def is_aboutme(self):
         return self.__visibility_of_textview(["Me", u"關於我"])
 
+    def is_FAQ(self):
+        return self.__visibility_of_textview(["FAQ", u"常見問題"])
+
+    def is_Contact(self):
+        return self.__visibility_of_textview(["Contact", u"聯絡我們"])
+
+    def is_faqwebview(self):
+        wv=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.webkit.WebView")))
+        if wv is None:
+            return False
+        return True
+
     def swipe_discover(self):
+        self.wait_transition(2)
         self.click_button_with_id("tv_discovery")
         self.wait_transition(1)
         return
@@ -176,6 +189,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
            
     def swipe_to_SearchId(self):
         self.click_textview_with_text([u"ID搜尋","ID Search"])
+
+    def swipe_to_faq(self):
+        self.click_textview_with_id("tv_faq")
+
+    def swipe_to_contact(self):
+        self.click_textview_with_id("tv_contact")
 
     def swipe_refresh(self):
         self.swipe_down()
@@ -214,7 +233,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
 
     def get_videocard(self):
-        videocard=self.wait.until(EC.presence_of_element_located((By.ID,"iv_video_play")))
+        videocard=self.wait.until(EC.presence_of_element_located((By.ID,"rl_post_card")))
         if videocard is None:
             return False
         else:
@@ -245,26 +264,57 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             return True
 
     def check_hashtag(self):
-        tagtext=self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+        
+        items = self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+        d=[]
+        for ii in range(1,3):
 
-        i=0
-        for  el in tagtext:
-            self.click_textview_with_text(el.text)
-            self.wait_transition(2)
-            i=i+1
-            videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
-            vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
-            if len(videonum)<4:
-                return False
-            # for al in vtag:
-            #     if el.text != al.text:
-            #         return False
-            self.press_back_key()
-            if i == 2:
-                self.swipe_hash()
-                i=0
-                self.wait_transition(2)
-        return True
+            for el in items:
+                elname=el.text
+                if el.text not in d:
+                    d.append(el.text)
 
+                    el.click()
+                    self.wait_transition(2.5)
+
+                    videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
+                    vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
+                    if len(videonum)<4:
+                        return False
+                    else:
+                        for al in vtag:
+                            if al.text not in elname:
+                                return False
+
+                    self.wait_transition(2.5)
+                    self.press_back_key()
+                    self.wait_transition(2.5)
+                else:
+                    return
+            self.swipe_hash()
+            self.wait_transition(2.5)
+            items = self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+
+    def check_zendesk(self):
+        self.assertTrue(self.is_FAQ())
+        self.assertTrue(self.is_Contact())
+
+    def check_faq(self):
+        self.swipe_to_faq()
+        self.wait_transition(4)
+        self.assertTrue(self.is_faqwebview())
+        self.wait_transition(2)
+        self.press_back_key()
+
+    def check_contact(self):
+        self.swipe_to_contact()
+        bbt=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.widget.ImageButton")))
+        bbt.click()
+        self.swipe_to_contact()
+        self.send_text_with_id("contact_fragment_description","ignore this ! automation test!")
+        self.wait_transition(1.5)
+        self.click_textview_with_id("fragment_contact_zendesk_menu_done")
+        self.wait_transition(1.5)
+        self.press_back_key()
 
 

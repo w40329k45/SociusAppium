@@ -131,14 +131,14 @@ class AppiumBaseHelper():
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
-        self.driver.swipe(start_x=center_x,start_y=top_y,end_x=center_x,end_y=button_y,duration=300)
-        self.wait_transition(2)
+        self.driver.swipe(start_x=center_x,start_y=top_y,end_x=center_x,end_y=button_y,duration=350)
+        self.wait_transition(4)
 
     def swipe_up(self):
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
-        self.driver.swipe(start_x=center_x,start_y=button_y,end_x=center_x,end_y=top_y,duration=300)
+        self.driver.swipe(start_x=center_x,start_y=button_y,end_x=center_x,end_y=top_y,duration=350)
         self.wait_transition(4)
 
     def swipe_hash(self):

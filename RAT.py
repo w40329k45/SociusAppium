@@ -311,7 +311,7 @@ class DiscoveryAndSupportTests(BaseTests):
                 self.sociushelper.swipe_loading()
                 self.assertTrue(self.sociushelper.get_videocard())
 
-            for y in range(5):
+            for y in range(6):
                 self.sociushelper.swipe_refresh()
 
             self.sociushelper.click_onlinevideocard()
@@ -321,8 +321,30 @@ class DiscoveryAndSupportTests(BaseTests):
             self.sociushelper.swipe_refresh()
             self.sociushelper.swipe_refresh()
 
-            self.assertTrue(self.sociushelper.check_hashtag())
+            self.sociushelper.check_hashtag()
             
 
+        except Exception as e:
+            raise
+
+    def test_zendesk(self):
+        try:
+            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
+            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+
+            # Facebook Login button on Soocii
+            self.sociushelper.click_facebook_login_button()
+            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_to_support()
+
+            self.sociushelper.check_zendesk()
+
+            self.sociushelper.check_faq()
+
+            self.sociushelper.check_contact()
         except Exception as e:
             raise
