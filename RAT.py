@@ -296,7 +296,7 @@ class DiscoveryAndSupportTests(BaseTests):
             self.sociushelper.swipe_refresh()
         except:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_login_existing_email_account")
+            self.syshelper.capture_screen("test_allpage")
             raise
             
     def test_discoverytap(self):
@@ -317,7 +317,7 @@ class DiscoveryAndSupportTests(BaseTests):
                 self.sociushelper.swipe_loading()
                 self.assertTrue(self.sociushelper.get_videocard())
 
-            for y in range(6):
+            for y in range(7):
                 self.sociushelper.swipe_refresh()
 
             self.sociushelper.click_onlinevideocard()
@@ -331,6 +331,8 @@ class DiscoveryAndSupportTests(BaseTests):
             
 
         except Exception as e:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_discoverytap")
             raise
 
     def test_zendesk(self):
@@ -353,4 +355,6 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.check_contact()
         except Exception as e:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_zendesk")
             raise

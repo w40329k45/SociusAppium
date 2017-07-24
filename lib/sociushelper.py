@@ -85,8 +85,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
 
     def click_videocard(self):
-        self.swipe_loading()
-        self.swipe_loading()
+        # self.swipe_loading()
+        # self.swipe_loading()
         self.click_button_with_id("rl_post_card")
         self.wait_transition(2)
         self.press_back_key()
