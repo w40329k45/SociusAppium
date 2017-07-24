@@ -317,4 +317,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1.5)
         self.press_back_key()
 
+    def click_confirm_recommended_celebrity(self):
+        # wait for recommended list is loaded
+        self.wait_transition(3)
+        self.click_button_with_id("add_follow_confirm")
 

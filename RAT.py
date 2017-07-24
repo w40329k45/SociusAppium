@@ -171,6 +171,9 @@ class EmailAccountTests(BaseTests):
                 accounthelper.email,
                 "password1234")
 
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
+
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
@@ -212,6 +215,9 @@ class EmailAccountTests(BaseTests):
                 accounthelper.name,
                 accounthelper.email,
                 "password1234")
+
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
