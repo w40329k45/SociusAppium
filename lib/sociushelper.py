@@ -75,7 +75,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # only require for Android6+
         if self.isAndroid5():
             return
-        self.click_textview_with_text(u"確認","Confirm")
+        self.click_textview_with_text([u"確認","Confirm"])
         # allow all system permissions
         self.allow_system_permissions(4)
 
@@ -85,8 +85,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
 
     def click_videocard(self):
-        self.swipe_loading()
-        self.swipe_loading()
+        # self.swipe_loading()
+        # self.swipe_loading()
         self.click_button_with_id("rl_post_card")
         self.wait_transition(2)
         self.press_back_key()
@@ -317,4 +317,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1.5)
         self.press_back_key()
 
+    def click_confirm_recommended_celebrity(self):
+        # wait for recommended list is loaded
+        self.wait_transition(3)
+        self.click_button_with_id("add_follow_confirm")
 
