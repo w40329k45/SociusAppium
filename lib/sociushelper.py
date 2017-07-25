@@ -322,3 +322,70 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(3)
         self.click_button_with_id("add_follow_confirm")
 
+    def click_camera_floatball(self):
+        #dp=px*160/dpi
+        #px=dp*dpi/160
+        center_x = self.window_size["width"]
+        if center_x == 720 : self.driver.tap([(45, 650)], 500)
+        elif center_x == 1080 : self.driver.tap([(50, 980)], 500)
+        else : self.driver.tap([(100, 1300)], 500)
+        
+
+    def click_open_fab_button(self):
+        self.click_button_with_id("fab_live")
+        self.wait_transition(2)
+
+    def choice_game(self):
+        self.click_textview_with_text(["Snake Off","Snake Off"])
+        self.wait_transition(1)
+
+    def setting_live(self):
+        self.click_button_with_id("ib_broadcast_icon_camera_switch")
+        self.wait_transition(3)
+        self.click_button_with_id("btn_friend_broadcast")
+        self.wait_transition(1)
+        self.click_button_with_id("button1")
+        self.wait_transition(20)
+
+    def broadcast(self,message):
+        self.click_button_with_id("iv_menu_icon_chat")
+        self.wait_transition(1)
+        self.click_button_with_id("messageEditText")
+        self.wait_transition(1)
+        self.send_text_with_id("messageEditText", message)
+        self.logger.info('sent message: {}'.format(message))
+        self.wait_transition(5)
+        self.click_button_with_id("sendButton")
+        self.wait_transition(2)
+
+    def change_camera(self):
+        self.click_button_with_id("iv_menu_icon_camera")
+        self.wait_transition(10)
+
+    def stop_live(self):
+        self.click_button_with_id("iv_menu_icon_stop")
+        self.wait_transition(1)
+
+    def go_to_post(self):
+        self.click_button_with_id("tv_go")    
+        
+    def share_live_record(self, upload,x):
+        #self.click_button_with_id("tv_go")
+        self.wait_transition(1)
+        self.click_button_with_id("upload_edittext")
+        self.wait_transition(1)
+        self.send_text_with_id("upload_edittext", upload+str(x+1))
+        self.logger.info('sent upload: {}'.format(upload+str(x+1)))
+        self.wait_transition(3)
+        self.click_button_with_id("tv_share")
+        self.wait_transition(15)
+
+    def back_soocii(self):
+        self.click_button_with_id("iv_menu_icon_back")
+        self.wait_transition(1)
+
+    def refresh_aboutme(self):
+        self.swipe_down()
+        self.wait_transition(3)
+
+
