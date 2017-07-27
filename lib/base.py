@@ -51,7 +51,7 @@ class AppiumBaseHelper():
     def press_home_key(self):
         # sending 'Home' key event
         self.driver.press_keycode(3)
-        self.wait_transition(0.5)
+        self.wait_transition(1.5)
 
     def press_recent_apps_key(self):
         # sending 'Recent Apps' key event
@@ -127,18 +127,18 @@ class AppiumBaseHelper():
         self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
 
-    def swipe_down(self):
+    def swipe_down(self,speed):
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
-        self.driver.swipe(start_x=center_x,start_y=top_y,end_x=center_x,end_y=button_y,duration=350)
+        self.driver.swipe(start_x=center_x,start_y=top_y,end_x=center_x,end_y=button_y,duration=speed)
         self.wait_transition(4)
 
-    def swipe_up(self):
+    def swipe_up(self,speed):
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
-        self.driver.swipe(start_x=center_x,start_y=button_y,end_x=center_x,end_y=top_y,duration=350)
+        self.driver.swipe(start_x=center_x,start_y=button_y,end_x=center_x,end_y=top_y,duration=speed)
         self.wait_transition(4)
 
     def swipe_hash(self):

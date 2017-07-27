@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 
 from base import AppiumBaseHelper
 
+
 class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def __init__(self, driver, platformName, platformVersion):
         AppiumBaseHelper.__init__(self, driver, platformName, platformVersion)
@@ -140,6 +141,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def is_message(self):# today
+        check = self.wait.until(EC.presence_of_all_elements_located((By.ID,"rootLayout")))
+        if check is None:
+            return False
+        return True
+
     def is_discover(self):
         return self.__visibility_of_textview(["Discovery", u"探索"])
 
@@ -160,6 +167,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         if wv is None:
             return False
         return True
+
+    def swpie_share_posts(self):# today
+        self.click_textview_with_id("tv_shares")
+        self.wait_transition(1)
+        self.click_button_with_id("menu_share_to_soocii")
+        self.wait_transition(1)
+
 
     def swipe_discover(self):
         self.wait_transition(2)
@@ -197,10 +211,34 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_textview_with_id("tv_contact")
 
     def swipe_refresh(self):
-        self.swipe_down()
+        self.swipe_down(350)
 
     def swipe_loading(self):
-        self.swipe_up()
+        self.swipe_up(350)
+
+    def swipe_posts(self):# today
+        self.wait_transition(2.5)
+        posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
+        posts_bt.click()
+        self.wait_transition(1)
+
+    def swipe_like(self):# today
+        self.wait_transition(1)
+        like_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_like")))
+        like_bt.click()
+        self.wait_transition(1)
+
+        
+    def swipe_and_send_message(self):# today
+        message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"message_edit_text")))
+        message_bt.click()
+        self.wait_transition(1)
+        self.send_text_with_id("message_edit_text","this is qa message")
+        self.wait_transition(1.5)
+        send_message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"outbox")))
+        send_message_bt.click()
+        self.wait_transition(1.5)
+
 
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
@@ -238,6 +276,20 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             return False
         else:
             return True
+
+    def chech_share_posts(self):
+        if self.get_text_with_id("tv_msg") in "this is share post testing":
+            return True
+        return False
+
+    def check_like_num(self):#today
+        check_like_tv = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.TextView")))
+        self.wait_transition(0.5)
+        for items in check_like_tv:
+            if "like" in items.text:
+                return items.text.split(" ")[0]
+            elif u"個棒" in items.text:
+                return items.text.split(" ")[0]   
 
     def check_aboutme(self,exdisplayname):
         self.swipe_to_aboutme()
@@ -335,6 +387,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_button_with_id("fab_live")
         self.wait_transition(2)
 
+
+
     def choice_game(self):
         self.click_textview_with_text(["Snake Off","Snake Off"])
         self.wait_transition(1)
@@ -385,7 +439,16 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1)
 
     def refresh_aboutme(self):
-        self.swipe_down()
+        self.swipe_down(350)
         self.wait_transition(3)
 
+    def input_send_share_message(self):# today
+        self.send_text_with_id("upload_edittext","this is share post testing")
+        self.wait_transition(1.5)
+        self.click_textview_with_id("action_share")
+        self.wait_transition(1.5)
+        self.press_back_key()
+        self.wait_transition(1)
 
+
+    
