@@ -313,11 +313,11 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.swipe_discover()
 
-            for x in range(5):
+            for x in range(10):
                 self.sociushelper.swipe_loading()
                 self.assertTrue(self.sociushelper.get_videocard())
 
-            for y in range(7):
+            for y in range(15):
                 self.sociushelper.swipe_refresh()
 
             self.sociushelper.click_onlinevideocard()
@@ -392,3 +392,26 @@ class LiveTests(BaseTests):
         finally:
             pass
             
+class PostsTests(BaseTests):
+    def test_edit_posts(self):
+        try:
+            
+            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
+            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+
+            # Facebook Login button on Soocii
+            self.sociushelper.click_facebook_login_button()
+            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.check_post()
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_edit_post")
+            raise
+        

@@ -197,10 +197,16 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_textview_with_id("tv_contact")
 
     def swipe_refresh(self):
-        self.swipe_down()
+        self.swipe_down(350)
 
     def swipe_loading(self):
-        self.swipe_up()
+        self.swipe_up(350)
+
+    def swipe_post_sandwish(self):
+        self.click_button_with_id("iv_more")
+
+    def swipe_post_edit(self):
+        self.click_button_with_id("menu_edit")
 
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
@@ -308,9 +314,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def check_contact(self):
         self.swipe_to_contact()
+        #click add button
+        self.click_textview_with_id("activity_request_list_add_icon")
         bbt=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.widget.ImageButton")))
         bbt.click()
-        self.swipe_to_contact()
+        #click add button
+        self.click_textview_with_id("activity_request_list_add_icon")
         self.send_text_with_id("contact_fragment_description","ignore this ! automation test!")
         self.wait_transition(1.5)
         self.click_textview_with_id("fragment_contact_zendesk_menu_done")
@@ -385,7 +394,39 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1)
 
     def refresh_aboutme(self):
-        self.swipe_down()
+        self.swipe_down(350)
         self.wait_transition(3)
 
-
+    def check_post(self):
+        
+        try:
+            #檢查分享貼文
+            sharecard=self.wait.until(EC.presence_of_element_located((By.ID,"shared_header")))
+        except :
+             #沒有分享貼文時執行例外
+            #click post
+            postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
+            postcard[1].click()
+            self.wait_transition(2)
+            #click sandwish button
+            self.swipe_post_sandwish()
+            self.wait_transition(1)
+            #click edit button
+            self.swipe_post_edit()
+            self.wait_transition(1)
+            #edit
+            self.send_text_with_id("upload_edittext","edit post")
+            self.wait_transition(1)
+            #click confirm
+            self.click_button_with_id("tv_share")
+            self.wait_transition(2)
+            #check title
+            postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
+            posttitle=postmsg.text
+            posttitle.index("edit post")
+            self.wait_transition(2)
+        else:
+            #沒有發生例外時執行
+            self.swipe_up(600)
+            self.wait_transition(2)
+            self.check_post()
