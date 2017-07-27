@@ -171,6 +171,9 @@ class EmailAccountTests(BaseTests):
                 accounthelper.email,
                 "password1234")
 
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
+
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
@@ -212,6 +215,9 @@ class EmailAccountTests(BaseTests):
                 accounthelper.name,
                 accounthelper.email,
                 "password1234")
+
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
@@ -290,7 +296,7 @@ class DiscoveryAndSupportTests(BaseTests):
             self.sociushelper.swipe_refresh()
         except:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_login_existing_email_account")
+            self.syshelper.capture_screen("test_allpage")
             raise
             
     def test_discoverytap(self):
@@ -311,7 +317,7 @@ class DiscoveryAndSupportTests(BaseTests):
                 self.sociushelper.swipe_loading()
                 self.assertTrue(self.sociushelper.get_videocard())
 
-            for y in range(6):
+            for y in range(7):
                 self.sociushelper.swipe_refresh()
 
             self.sociushelper.click_onlinevideocard()
@@ -325,6 +331,8 @@ class DiscoveryAndSupportTests(BaseTests):
             
 
         except Exception as e:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_discoverytap")
             raise
 
     def test_zendesk(self):
@@ -347,4 +355,40 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.check_contact()
         except Exception as e:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_zendesk")
             raise
+
+class LiveTests(BaseTests):
+    def test_open_live(self):
+        try:
+            #login_with_email
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            
+            self.sociushelper.click_require_permission_button()
+            #open_streaming 10 times
+            for x in range(10):
+                self.sociushelper.click_open_fab_button()
+                self.sociushelper.choice_game()
+                self.sociushelper.setting_live()
+                self.sociushelper.click_camera_floatball()
+                self.sociushelper.broadcast("hi welcome to my broadcast")
+                for y in range(3):
+                    self.sociushelper.change_camera()
+                #share post
+                self.sociushelper.stop_live()
+                self.sociushelper.go_to_post()
+                self.sociushelper.share_live_record("broadcast",x)
+                self.sociushelper.click_camera_floatball()
+                self.sociushelper.back_soocii()
+                self.sociushelper.swipe_to_aboutme()
+                self.sociushelper.refresh_aboutme()
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_open_live")
+            raise
+        finally:
+            pass
+            
