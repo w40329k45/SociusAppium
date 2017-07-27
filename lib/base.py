@@ -85,6 +85,12 @@ class AppiumBaseHelper():
             if txtView.text in text:
                 txtView.click()
                 return True
+            elif text[0] in txtView.text:
+                txtView.click()
+                return True
+            elif text[1] in txtView.text:
+                txtView.click()
+                return True
         return False
 
     def click_textview_with_id(self, id):
@@ -97,6 +103,8 @@ class AppiumBaseHelper():
         field = self.wait.until(EC.presence_of_element_located((By.ID, id)))
         field.clear()
         field.send_keys(text)
+        if id in "input_soocii_id_text":
+            self.driver.keyevent(66)
         try:
             self.driver.hide_keyboard()
         except:
@@ -117,6 +125,27 @@ class AppiumBaseHelper():
         right_x = self.window_size["width"] * 0.9
         center_y = self.window_size["height"] * 0.5
         self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
+        self.wait_transition(0.5)
+
+    def swipe_down(self):
+        center_x=self.window_size["width"]*0.5
+        top_y=self.window_size["height"]*0.4
+        button_y=self.window_size["height"]*0.9
+        self.driver.swipe(start_x=center_x,start_y=top_y,end_x=center_x,end_y=button_y,duration=350)
+        self.wait_transition(4)
+
+    def swipe_up(self):
+        center_x=self.window_size["width"]*0.5
+        top_y=self.window_size["height"]*0.4
+        button_y=self.window_size["height"]*0.9
+        self.driver.swipe(start_x=center_x,start_y=button_y,end_x=center_x,end_y=top_y,duration=350)
+        self.wait_transition(4)
+
+    def swipe_hash(self):
+        left_x = self.window_size["width"] * 0.1
+        right_x = self.window_size["width"] * 0.9
+        center_y = self.window_size["height"] * 0.56
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
 
     def get_text_with_id(self, id):
