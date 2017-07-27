@@ -360,9 +360,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def check_contact(self):
         self.swipe_to_contact()
+        self.click_textview_with_id("activity_request_list_add_icon")
         bbt=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.widget.ImageButton")))
         bbt.click()
-        self.swipe_to_contact()
+        self.click_textview_with_id("activity_request_list_add_icon")
         self.send_text_with_id("contact_fragment_description","ignore this ! automation test!")
         self.wait_transition(1.5)
         self.click_textview_with_id("fragment_contact_zendesk_menu_done")
