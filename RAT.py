@@ -406,14 +406,14 @@ class PostsTests(BaseTests):
             self.sociushelper.click_require_permission_button()
 
             self.sociushelper.swipe_to_aboutme()
-            self.sociushelper.swipe_posts()
+            self.sociushelper.swipe_posts()#into  single posts
             check_a = self.sociushelper.check_like_num() # (a) to get like of number  
             self.sociushelper.swipe_like()#click like
             check_b = self.sociushelper.check_like_num() # (b) to get like of number  
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
-            self.sociushelper.swipe_and_send_message()
+            self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
             self.assertTrue(self.sociushelper.is_message())#if message visibility
-            self.syshelper.press_home_key()
+            self.syshelper.press_back_key()
 
 
         except :
@@ -435,7 +435,7 @@ class PostsTests(BaseTests):
             self.sociushelper.input_send_share_message()#input message and click send button
             self.sociushelper.swipe_refresh()
 
-            self.assertTrue(self.sociushelper.chech_share_posts())
+            self.assertTrue(self.sociushelper.chech_share_posts())#make sure 
 
             
 
