@@ -400,13 +400,11 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def check_post(self):
         
         try:
-            #檢查分享貼文
             sharecard=self.wait.until(EC.presence_of_element_located((By.ID,"shared_header")))
         except :
-             #沒有分享貼文時執行例外
             #click post
             postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
-            postcard[1].click()
+            postcard[0].click()
             self.wait_transition(2)
             #click sandwish button
             self.swipe_post_sandwish()
@@ -426,7 +424,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             posttitle.index("edit post")
             self.wait_transition(2)
         else:
-            #沒有發生例外時執行
             self.swipe_up(600)
             self.wait_transition(2)
             self.check_post()
