@@ -1,3 +1,6 @@
+
+
+
 #coding=utf-8
 import os
 import re
@@ -392,3 +395,53 @@ class LiveTests(BaseTests):
         finally:
             pass
             
+
+class PostsTests(BaseTests):
+    def test_comments(self):
+        try:
+
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_to_aboutme()
+            self.sociushelper.swipe_posts()#into  single posts
+            check_a = self.sociushelper.check_like_num() # (a) to get like of number  
+            self.sociushelper.swipe_like()#click like
+            check_b = self.sociushelper.check_like_num() # (b) to get like of number  
+            self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
+            self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
+            self.assertTrue(self.sociushelper.is_message())#if message visibility
+            self.syshelper.press_back_key()
+
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_comments")
+            raise
+        finally:
+            pass
+
+    def test_share_posts(self):
+        try:
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_to_aboutme()
+            self.sociushelper.swipe_posts()#click share button
+            self.sociushelper.swpie_share_posts()#click share posts button
+            self.sociushelper.input_send_share_message()#input message and click send button
+            self.sociushelper.swipe_refresh()
+
+            self.assertTrue(self.sociushelper.chech_share_posts())#make sure 
+
+            
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_open_live")
+            raise
+        finally:
+            pass
