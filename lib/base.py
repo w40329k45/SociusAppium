@@ -1,5 +1,6 @@
 #coding=utf-8
 import logging
+import time
 
 from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
@@ -147,6 +148,32 @@ class AppiumBaseHelper():
         center_y = self.window_size["height"] * 0.56
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
+
+    def swipe_edit(self):
+        left_x = self.window_size["width"] * 0.06
+        right_x = self.window_size["width"] * 0.5
+        center_y = self.window_size["height"] * 0.9
+        self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+    def swipe_edit_back(self):
+        left_x = self.window_size["width"] * 0.06
+        right_x = self.window_size["width"] * 0.5
+        center_y = self.window_size["height"] * 0.9
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+    def swipe_discovery_stream(self):
+        left_x = self.window_size["width"] * 0.1
+        right_x = self.window_size["width"] * 0.7
+        center_y = self.window_size["height"] * 0.25
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+
+    def get_time(self):
+        a = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        return a
 
     def get_text_with_id(self, id):
         text = self.wait.until(EC.presence_of_element_located((By.ID, id)))
