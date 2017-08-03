@@ -171,9 +171,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def swpie_share_posts(self):# today
         self.click_textview_with_id("tv_shares")
         self.wait_transition(1)
+
+    def swipe_share_posts_to_soocii(self):
         self.click_button_with_id("menu_share_to_soocii")
         self.wait_transition(1)
 
+    def swipe_share_posts_to_otherapp(self):
+        self.click_button_with_id("menu_share_to_other")
+        self.wait_transition(1)        
 
     def swipe_discover(self):
         self.wait_transition(2)
@@ -542,6 +547,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             self.wait_transition(3)
         self.check_post_title(text)
 
+    def check_share_otherapp_posts(self):
+        self.swipe_posts()
+        self.swpie_share_posts()
+        self.swipe_share_posts_to_otherapp()
+        shoth=self.wait.until(EC.presence_of_element_located((By.ID,"title")))
+        if shoth is None:
+            return False
+        return True
 
     def choose_video(self):
         #choose folder

@@ -525,5 +525,25 @@ class PostsTests(BaseTests):
         finally:
             pass
 
+    def test_share_posts_to_otherapp(self):
+        try:
+            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
+            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+
+            # Facebook Login button on Soocii
+            self.sociushelper.click_facebook_login_button()
+            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_to_aboutme()
+
+            self.assertTrue(self.sociushelper.check_share_otherapp_posts())
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_share_posts_to_otherapp")
+            raise
+
         
 
