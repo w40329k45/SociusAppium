@@ -40,6 +40,12 @@ def getDeviceProp(prop):
     p = re.compile('\[ro.{}\]: \[(.+)\]'.format(prop))
     return p.findall(line)[0]
 
+def nofile():
+    subprocess.Popen(['adb', 'shell', 'rm', '/sdcard/Soocii/*.mp4', '/sdcard/soocii/*.jpeg'])
+   
+def havefile():
+    subprocess.Popen(['adb', 'push', config.VIDEO_PHOTO_DIR_PATH, '/sdcard/Soocii/'])     
+
 class BaseTests(unittest.TestCase):
     def setUp(self):
         desired_caps = {}
@@ -52,7 +58,7 @@ class BaseTests(unittest.TestCase):
         desired_caps['app'] = PATH(
             config.PATH_TO_TEST_APK
         )
-
+        # subprocess.Popen(['adb', 'shell', 'rm', '/sdcard/soocii/*.mp4', '/sdcard/soocii/*.jpeg'])
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(5)
         self.logger = logging.getLogger()
@@ -408,8 +414,9 @@ class LiveTests(BaseTests):
             
 class PostsTests(BaseTests):
     def test_edit_posts(self):
+        havefile()
         try:
-            
+
             expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
             expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
 
@@ -420,7 +427,13 @@ class PostsTests(BaseTests):
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
+
             self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.click_viedo_to_share()##click viedo button in about me,and share viedo
+
+            self.sociushelper.check_and_refresh_share_posts("video from about me")
+
 
             self.sociushelper.check_post()
 
@@ -428,8 +441,10 @@ class PostsTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_edit_post")
             raise
+
     def test_firstposts(self):
         try:
+            nofile()
             accounthelper = AccountHelper()
 
             # Create new account button on Soocii
@@ -474,11 +489,10 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_like()#click like
             check_b = self.sociushelper.check_like_num() # (b) to get like of number  
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
+            self.sociushelper.swipe_like()#keep like
             self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
             self.assertTrue(self.sociushelper.is_message())#if message visibility
             self.syshelper.press_back_key()
-
-
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_comments")
@@ -508,4 +522,6 @@ class PostsTests(BaseTests):
             raise
         finally:
             pass
+
+        
 

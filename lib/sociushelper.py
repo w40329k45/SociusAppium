@@ -182,54 +182,72 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return
 
     def swipe_to_newsfeed(self):
+        self.wait_transition(2)
         self.click_button_with_id("tv_feed")
         return
 
     def swipe_to_friendlist(self):
+        self.wait_transition(2)
         self.click_button_with_id("iv_invite_icon")
         return
 
     def swipe_to_aboutme(self):
+        self.wait_transition(5)
         self.click_textview_with_id("icon_profile")
 
     def swipe_to_support(self):
+        self.wait_transition(2)
         self.click_button_with_id("iv_help_icon")
 
     def swipe_to_fans(self):
+        self.wait_transition(2)
         self.click_textview_with_text([u"粉絲","Follower"]) 
 
     def swipe_to_suggest(self):
+        self.wait_transition(2)
         self.click_textview_with_text(["Suggest",u"用戶推薦"]) 
            
     def swipe_to_SearchId(self):
+        self.wait_transition(2)
         self.click_textview_with_text([u"ID搜尋","ID Search"])
 
     def swipe_to_faq(self):
+        self.wait_transition(2)
         self.click_textview_with_id("tv_faq")
 
     def swipe_to_contact(self):
+        self.wait_transition(2)
         self.click_textview_with_id("tv_contact")
 
     def swipe_refresh(self):
+        self.wait_transition(2)
         self.swipe_down(350)
 
     def swipe_loading(self):
+        self.wait_transition(2)
         self.swipe_up(350)
 
     def swipe_post_sandwish(self):
+        self.wait_transition(2)
         self.click_button_with_id("iv_more")
 
     def swipe_post_edit(self):
+        self.wait_transition(2)
         self.click_button_with_id("menu_edit")
 
     def swipe_choose_video(self):
+        self.wait_transition(2)
         self.click_textview_with_text([u"影音","Viedo"])
 
     def swipe_posts(self):# today
         self.wait_transition(2.5)
-        posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
-        posts_bt.click()
-        self.wait_transition(1)
+        try:
+            posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
+        except :
+            posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
+        finally :
+            posts_bt.click()
+            self.wait_transition(1)
 
     def swipe_like(self):# today
         self.wait_transition(1)
@@ -247,6 +265,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         send_message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"outbox")))
         send_message_bt.click()
         self.wait_transition(1.5)
+
+    def swipe_aboutme_video(self):#today
+        video_bt = self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video")))
+        if video_bt is None:
+            return False
+        video_bt[0].click()
+        self.wait_transition(2)
 
 
     def get_newsfeed_info(self):
@@ -415,6 +440,19 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_button_with_id("fab_live")
         self.wait_transition(2)
 
+    def click_viedo_to_share(self):#today
+        self.swipe_aboutme_video()#click video
+
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(1)
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(1)#click next button x2
+
+        self.send_text_with_id("upload_edittext","video from about me")#posts message
+        self.wait_transition(1.5)
+
+        self.click_textview_with_id("tv_share")#click share button
+        self.wait_transition(1.5)
 
 
     def choice_game(self):
@@ -472,37 +510,37 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def check_post_title(self,text):
         #check title
-            postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
-            posttitle=postmsg.text
-            posttitle.index(text)
-            self.wait_transition(2)
+        postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
+        posttitle=postmsg.text
+        posttitle.index(text)
+        self.wait_transition(2)
 
     def check_post(self):
         
-        try:
-            sharecard=self.wait.until(EC.presence_of_element_located((By.ID,"shared_header")))
-        except :
-            #click post
-            postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
-            postcard[0].click()
-            self.wait_transition(2)
-            #click sandwish button
-            self.swipe_post_sandwish()
-            self.wait_transition(1)
-            #click edit button
-            self.swipe_post_edit()
-            self.wait_transition(1)
-            #edit
-            self.send_text_with_id("upload_edittext","edit post")
-            self.wait_transition(1)
-            #click confirm
-            self.click_button_with_id("tv_share")
-            self.wait_transition(2)
-            self.check_post_title("edit post")
-        else:
-            self.swipe_up(600)
-            self.wait_transition(2)
-            self.check_post()
+        #click post
+        postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
+        postcard[0].click()
+        self.wait_transition(2)
+        #click sandwish button
+        self.swipe_post_sandwish()
+        self.wait_transition(1)
+        #click edit button
+        self.swipe_post_edit()
+        self.wait_transition(1)
+        #edit
+        self.send_text_with_id("upload_edittext","edit post")
+        self.wait_transition(1)
+        #click confirm
+        self.click_button_with_id("tv_share")
+        self.wait_transition(2)
+        self.check_post_title("edit post")
+
+    def check_and_refresh_share_posts(self,text):#today 
+        for x in range(3):
+            self.swipe_refresh()
+            self.wait_transition(3)
+        self.check_post_title(text)
+
 
     def choose_video(self):
         #choose folder
@@ -558,50 +596,31 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #     #check title
         #     self.check_post_title("upload video from local")
         #     
+        self.swipe_choose_video()
+        self.wait_transition(2)
         try:
-            #check video&photo icon
-            self.assertFalse(self.check_video_and_photo_icon())
-        except :
-            
-            #if have
-            self.swipe_choose_video()
-            self.wait_transition(2)
-            try:
-                #check choose google album
-                self.assertFalse(self.click_choose_album())
-            except:
-                #if have the button
-                self.click_alwaysbutton() 
-            else:
-                #if not have the button,do not thing
-                pass
-
-            self.choose_video()
-            #click next*2
-            self.click_button_with_id("btn_trim_complete")
-            self.wait_transition(1)
-            self.click_button_with_id("btn_trim_complete")
-            self.wait_transition(2)
-            #keyin title
-            self.send_text_with_id("upload_edittext","upload video from local")
-            self.click_textview_with_id("tv_share")
-            self.wait_transition(20)
-            self.swipe_refresh()
-            #check title
-            self.check_post_title("upload video from local")
+            #check choose google album
+            self.assertFalse(self.click_choose_album())
+        except:
+            #if have the button
+            self.click_alwaysbutton() 
         else:
-            
-            #if not have,delete soocii vedio
-            self.swipe_longtap()
-            self.wait_transition(2)
-            deletebtn=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_delete")))
-            deletebtn[0].click()
-            self.wait_transition(2)
-            self.swipe_longtap()
-            self.wait_transition(2)
-            self.swipe_refresh()
-            self.new_local_video_post()
-            
+            #if not have the button,do not thing
+            pass
+
+        self.choose_video()
+        #click next*2
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(1)
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(2)
+        #keyin title
+        self.send_text_with_id("upload_edittext","upload video from local")
+        self.click_textview_with_id("tv_share")
+        self.wait_transition(20)
+        self.swipe_refresh()
+        #check title
+        self.check_post_title("upload video from local")
     def input_send_share_message(self):# today
         self.send_text_with_id("upload_edittext","this is share post testing")
         self.wait_transition(1.5)
