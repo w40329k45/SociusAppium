@@ -208,6 +208,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def swipe_post_edit(self):
         self.click_button_with_id("menu_edit")
 
+    def swipe_choose_video(self):
+        self.click_textview_with_text([u"影音","Viedo"])
+
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
         feedcard = self.wait.until(EC.presence_of_all_elements_located((By.ID,"ll_post_card")))
@@ -326,10 +329,26 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1.5)
         self.press_back_key()
 
+    def check_video_and_photo_icon(self):
+        vpicons=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_action")))
+        keyw=[u"影音","Viedo",u"圖片","Image"]
+        for vpicon in vpicons:
+            if vpicon.text in keyw:
+
+                return True
+        return False
+
+    def click_choose_album(self):
+        self.click_textview_with_text([u"相簿","Photos"])
+
+    def click_alwaysbutton(self):
+        self.click_button_with_id("button_always")
+
     def click_confirm_recommended_celebrity(self):
         # wait for recommended list is loaded
-        self.wait_transition(3)
+        self.wait_transition(8)
         self.click_button_with_id("add_follow_confirm")
+        self.wait_transition(3)
 
     def click_camera_floatball(self):
         #dp=px*160/dpi
@@ -397,16 +416,23 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_down(350)
         self.wait_transition(3)
 
+    def check_post_title(self,text):
+        #check title
+            postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
+            posttitle=postmsg.text
+            posttitle.index(text)
+            self.wait_transition(2)
+
     def check_post(self):
         
         try:
-            #檢查分享貼文
+            
             sharecard=self.wait.until(EC.presence_of_element_located((By.ID,"shared_header")))
         except :
-             #沒有分享貼文時執行例外
+             
             #click post
             postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
-            postcard[1].click()
+            postcard[0].click()
             self.wait_transition(2)
             #click sandwish button
             self.swipe_post_sandwish()
@@ -420,13 +446,108 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             #click confirm
             self.click_button_with_id("tv_share")
             self.wait_transition(2)
-            #check title
-            postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
-            posttitle=postmsg.text
-            posttitle.index("edit post")
-            self.wait_transition(2)
+            self.check_post_title("edit post")
         else:
-            #沒有發生例外時執行
+            
             self.swipe_up(600)
             self.wait_transition(2)
             self.check_post()
+
+    def choose_video(self):
+        #choose folder
+        photofolder=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.RelativeLayout")))
+        photofolder[0].click()
+        self.wait_transition(2)
+        #choose video
+        avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+        avideo[1].click()
+        self.wait_transition(2)
+
+    def new_local_video_post(self):
+        self.wait_transition(5)
+        # try:
+        #     #check video&photo icon
+        #     self.assertTrue(self.check_video_and_photo_icon())
+        # except :
+        #     #if not have,delete soocii vedio
+        #     self.swipe_longtap()
+        #     self.wait_transition(2)
+        #     deletebtn=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_delete")))
+        #     deletebtn[0].click()
+        #     self.wait_transition(2)
+        #     self.swipe_longtap()
+        #     self.wait_transition(2)
+        #     self.new_local_video_post()
+        #     raise
+        # else:
+        #     #if have
+        #     self.swipe_choose_video()
+        #     self.wait_transition(2)
+        #     try:
+        #         #check choose google album
+        #         self.assertFalse(self.click_choose_album())
+        #     except:
+        #         #if have the button
+        #         self.click_alwaysbutton() 
+        #     else:
+        #         #if not have the button,do not thing
+        #         pass
+
+        #     self.choose_video()
+        #     #click next*2
+        #     self.click_button_with_id("btn_trim_complete")
+        #     self.wait_transition(1)
+        #     self.click_button_with_id("btn_trim_complete")
+        #     self.wait_transition(2)
+        #     #keyin title
+        #     self.send_text_with_id("upload_edittext","upload video from local")
+        #     self.click_textview_with_id("tv_share")
+        #     self.wait_transition(20)
+        #     self.swipe_refresh()
+        #     #check title
+        #     self.check_post_title("upload video from local")
+        #     
+        try:
+            #check video&photo icon
+            self.assertFalse(self.check_video_and_photo_icon())
+        except :
+            
+            #if have
+            self.swipe_choose_video()
+            self.wait_transition(2)
+            try:
+                #check choose google album
+                self.assertFalse(self.click_choose_album())
+            except:
+                #if have the button
+                self.click_alwaysbutton() 
+            else:
+                #if not have the button,do not thing
+                pass
+
+            self.choose_video()
+            #click next*2
+            self.click_button_with_id("btn_trim_complete")
+            self.wait_transition(1)
+            self.click_button_with_id("btn_trim_complete")
+            self.wait_transition(2)
+            #keyin title
+            self.send_text_with_id("upload_edittext","upload video from local")
+            self.click_textview_with_id("tv_share")
+            self.wait_transition(20)
+            self.swipe_refresh()
+            #check title
+            self.check_post_title("upload video from local")
+        else:
+            
+            #if not have,delete soocii vedio
+            self.swipe_longtap()
+            self.wait_transition(2)
+            deletebtn=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_delete")))
+            deletebtn[0].click()
+            self.wait_transition(2)
+            self.swipe_longtap()
+            self.wait_transition(2)
+            self.swipe_refresh()
+            self.new_local_video_post()
+            

@@ -362,11 +362,22 @@ class DiscoveryAndSupportTests(BaseTests):
 class LiveTests(BaseTests):
     def test_open_live(self):
         try:
-            #login_with_email
-            self.sociushelper.click_login_by_email_link()
-            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            # #login_with_email
+            # self.sociushelper.click_login_by_email_link()
+            # self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
             
+            # self.sociushelper.click_require_permission_button()
+
+            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
+            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+
+            # Facebook Login button on Soocii
+            self.sociushelper.click_facebook_login_button()
+            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
+
+            # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
+
             #open_streaming 10 times
             for x in range(10):
                 self.sociushelper.click_open_fab_button()
@@ -414,4 +425,34 @@ class PostsTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_edit_post")
             raise
-        
+    def test_firstposts(self):
+        try:
+            accounthelper = AccountHelper()
+
+            # Create new account button on Soocii
+            self.sociushelper.click_create_new_account_using_email_button()
+
+            # flow to create new account
+            self.sociushelper.create_account(
+                accounthelper.name,
+                accounthelper.name,
+                accounthelper.email,
+                "password1234")
+
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
+
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.new_local_video_post()
+
+
+            
+        except:
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_firstposts")
+            raise
