@@ -522,6 +522,19 @@ class PostsTests(BaseTests):
             raise
         finally:
             pass
+    def test_share_posts_to_otherapp(self):
+        try:
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
+            
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
 
+            self.sociushelper.swipe_to_aboutme()
 
-
+            self.assertTrue(self.sociushelper.check_share_otherapp_posts())
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_share_posts_to_otherapp")
+            raise
