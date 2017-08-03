@@ -51,7 +51,7 @@ class AppiumBaseHelper():
     def press_home_key(self):
         # sending 'Home' key event
         self.driver.press_keycode(3)
-        self.wait_transition(0.5)
+        self.wait_transition(1.5)
 
     def press_recent_apps_key(self):
         # sending 'Recent Apps' key event
@@ -128,7 +128,6 @@ class AppiumBaseHelper():
         self.wait_transition(0.5)
 
     def swipe_down(self,speed):
-        # 新增自訂持續時間
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
@@ -136,7 +135,6 @@ class AppiumBaseHelper():
         self.wait_transition(4)
 
     def swipe_up(self,speed):
-        # 新增自訂持續時間
         center_x=self.window_size["width"]*0.5
         top_y=self.window_size["height"]*0.4
         button_y=self.window_size["height"]*0.9
