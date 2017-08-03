@@ -235,7 +235,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         except :
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
         finally:
-            posts_bt.click()
+            posts_bt.click()#if first post is iv_thumbnail(viedo) or iv_screenshot (photo) ,to click
 
         self.wait_transition(1)
 

@@ -467,9 +467,22 @@ class PostsTests(BaseTests):
 
     def test_upload_picture(self):
         try:
-            self.sociushelper.click_login_by_email_link()
-            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            accounthelper = AccountHelper()
+
+            # Create new account button on Soocii
+            self.sociushelper.click_create_new_account_using_email_button()
+
+            # flow to create new account
+            self.sociushelper.create_account(
+                accounthelper.name,
+                accounthelper.name,
+                accounthelper.email,
+                "password1234")
+
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
             self.sociushelper.click_require_permission_button()
+
 
             nofile()#delete all file
             self.sociushelper.swipe_to_aboutme()
@@ -493,8 +506,8 @@ class PostsTests(BaseTests):
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
                 
             self.sociushelper.click_require_permission_button()
-            nofile()
-            havefile()#put file to test case (photo )
+            nofile()#clear all file
+            havefile()#put file to test case (photo and viedo)
             
             self.sociushelper.swipe_to_aboutme()
 
