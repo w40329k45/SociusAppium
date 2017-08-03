@@ -426,10 +426,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def check_post(self):
         
         try:
-            
             sharecard=self.wait.until(EC.presence_of_element_located((By.ID,"shared_header")))
         except :
-             
             #click post
             postcard=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_thumbnail")))
             postcard[0].click()
@@ -448,7 +446,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             self.wait_transition(2)
             self.check_post_title("edit post")
         else:
-            
             self.swipe_up(600)
             self.wait_transition(2)
             self.check_post()
