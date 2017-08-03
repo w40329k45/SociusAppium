@@ -192,7 +192,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return
 
     def swipe_to_aboutme(self):
-        self.wait_transition(5)
+        self.wait_transition(2)
         self.click_textview_with_id("icon_profile")
 
     def swipe_to_support(self):
@@ -240,6 +240,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_textview_with_text([u"影音","Viedo"])
 
     def swipe_posts(self):# today
+        #soocii & local ID is deffirend 
         self.wait_transition(2.5)
         try:
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
@@ -554,58 +555,17 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def new_local_video_post(self):
         self.wait_transition(5)
-        # try:
-        #     #check video&photo icon
-        #     self.assertTrue(self.check_video_and_photo_icon())
-        # except :
-        #     #if not have,delete soocii vedio
-        #     self.swipe_longtap()
-        #     self.wait_transition(2)
-        #     deletebtn=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_delete")))
-        #     deletebtn[0].click()
-        #     self.wait_transition(2)
-        #     self.swipe_longtap()
-        #     self.wait_transition(2)
-        #     self.new_local_video_post()
-        #     raise
-        # else:
-        #     #if have
-        #     self.swipe_choose_video()
-        #     self.wait_transition(2)
-        #     try:
-        #         #check choose google album
-        #         self.assertFalse(self.click_choose_album())
-        #     except:
-        #         #if have the button
-        #         self.click_alwaysbutton() 
-        #     else:
-        #         #if not have the button,do not thing
-        #         pass
-
-        #     self.choose_video()
-        #     #click next*2
-        #     self.click_button_with_id("btn_trim_complete")
-        #     self.wait_transition(1)
-        #     self.click_button_with_id("btn_trim_complete")
-        #     self.wait_transition(2)
-        #     #keyin title
-        #     self.send_text_with_id("upload_edittext","upload video from local")
-        #     self.click_textview_with_id("tv_share")
-        #     self.wait_transition(20)
-        #     self.swipe_refresh()
-        #     #check title
-        #     self.check_post_title("upload video from local")
-        #     
+        #add local video
         self.swipe_choose_video()
         self.wait_transition(2)
         try:
             #check choose google album
             self.assertFalse(self.click_choose_album())
         except:
-            #if have the button
+            #if don't have the button
             self.click_alwaysbutton() 
         else:
-            #if not have the button,do not thing
+            #if have the button,do not thing
             pass
 
         self.choose_video()
@@ -621,6 +581,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_refresh()
         #check title
         self.check_post_title("upload video from local")
+
     def input_send_share_message(self):# today
         self.send_text_with_id("upload_edittext","this is share post testing")
         self.wait_transition(1.5)

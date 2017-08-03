@@ -40,9 +40,11 @@ def getDeviceProp(prop):
     p = re.compile('\[ro.{}\]: \[(.+)\]'.format(prop))
     return p.findall(line)[0]
 
+#putout testfile
 def nofile():
     subprocess.Popen(['adb', 'shell', 'rm', '/sdcard/Soocii/*.mp4', '/sdcard/soocii/*.jpeg'])
-   
+
+#putin testfile
 def havefile():
     subprocess.Popen(['adb', 'push', config.VIDEO_PHOTO_DIR_PATH, '/sdcard/Soocii/'])     
 
