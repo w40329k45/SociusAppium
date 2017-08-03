@@ -13,6 +13,7 @@ import subprocess
 from appium import webdriver
 
 import config
+
 from lib.syshelper import SysHelper
 from lib.sociushelper import SociusHelper
 from lib.accounthelper import AccountHelper
@@ -31,14 +32,28 @@ ch.setFormatter(logFormatter)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
+
 def getDeviceProp(prop):
     p1 = subprocess.Popen(['adb', 'shell', 'getprop'], stdout=subprocess.PIPE)
     p2 = subprocess.Popen(['grep', prop], stdin=p1.stdout, stdout=subprocess.PIPE)
+    subprocess.Popen(['cd','~/Documents/GitHub/SociusAppium/'])
+        
+    subprocess.Popen(['adb','push', '*.mp4', '/sdcard/Soocii'])
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     line = p2.communicate()[0]
     # parse value
     p = re.compile('\[ro.{}\]: \[(.+)\]'.format(prop))
     return p.findall(line)[0]
+
+
+def nofile():
+    subprocess.Popen(['adb', 'shell', 'rm', '/sdcard/Soocii/*.mp4', '/sdcard/Soocii/*.jpeg'])
+# class abc():
+def havefile():
+    subprocess.Popen(['adb', 'push', config.VIEDO_PHOTO__DIR_PATH, '/sdcard/Soocii/'])
+
+    
+    
 
 class BaseTests(unittest.TestCase):
     def setUp(self):
@@ -52,7 +67,8 @@ class BaseTests(unittest.TestCase):
         desired_caps['app'] = PATH(
             config.PATH_TO_TEST_APK
         )
-
+        
+        # self.assertTrue(inputp())
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(5)
         self.logger = logging.getLogger()
@@ -68,6 +84,9 @@ class BaseTests(unittest.TestCase):
 
         # end the session
         self.driver.quit()
+
+        
+
 
 class FacebookAccountTests(BaseTests):
     # Login with existing facebook account and enable usage access once
@@ -371,22 +390,22 @@ class LiveTests(BaseTests):
             
             self.sociushelper.click_require_permission_button()
             #open_streaming 10 times
-            for x in range(10):
-                self.sociushelper.click_open_fab_button()
-                self.sociushelper.choice_game()
-                self.sociushelper.setting_live()
-                self.sociushelper.click_camera_floatball()
-                self.sociushelper.broadcast("hi welcome to my broadcast")
-                for y in range(3):
-                    self.sociushelper.change_camera()
-                #share post
-                self.sociushelper.stop_live()
-                self.sociushelper.go_to_post()
-                self.sociushelper.share_live_record("broadcast",x)
-                self.sociushelper.click_camera_floatball()
-                self.sociushelper.back_soocii()
-                self.sociushelper.swipe_to_aboutme()
-                self.sociushelper.refresh_aboutme()
+            # for x in range(10):
+            self.sociushelper.click_open_fab_button()
+            self.sociushelper.choice_game()
+            self.sociushelper.setting_live()
+            self.sociushelper.click_camera_floatball()
+            self.sociushelper.broadcast("hi welcome to my broadcast")
+            for y in range(3):
+                self.sociushelper.change_camera()
+            #share post
+            self.sociushelper.stop_live()
+            self.sociushelper.go_to_post()
+            self.sociushelper.share_live_record("broadcast",x)
+            self.sociushelper.click_camera_floatball()
+            self.sociushelper.back_soocii()
+            self.sociushelper.swipe_to_aboutme()
+            self.sociushelper.refresh_aboutme()
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
@@ -399,7 +418,6 @@ class LiveTests(BaseTests):
 class PostsTests(BaseTests):
     def test_comments(self):
         try:
-
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
                 
@@ -411,6 +429,7 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_like()#click like
             check_b = self.sociushelper.check_like_num() # (b) to get like of number  
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
+            self.sociushelper.swipe_like()#click like ,let like number = 0
             self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
             self.assertTrue(self.sociushelper.is_message())#if message visibility
             self.syshelper.press_back_key()
@@ -445,3 +464,51 @@ class PostsTests(BaseTests):
             raise
         finally:
             pass
+
+    def test_upload_picture(self):
+        try:
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            self.sociushelper.click_require_permission_button()
+
+            nofile()#delete all file
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.click_share_picture()#click image button in about me,and share photo 
+
+            self.sociushelper.check_and_refresh_share_posts("upload img from local")
+            #come back to aboutme,to check share posts is exist (picture)
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_open_live")
+            raise
+        finally:
+            pass
+
+    def test_check_and_share_record(self):
+        try:
+            
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
+            self.sociushelper.click_require_permission_button()
+            nofile()
+            havefile()#put file to test case (photo )
+            
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.click_viedo_to_share()##click viedo button in about me,and share viedo
+
+            self.sociushelper.check_and_refresh_share_posts("video from about me")
+            #come back to aboutme,to check share posts is exist (viedo)
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_open_live")
+            raise
+        finally:
+            pass
+
+
+

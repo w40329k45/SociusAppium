@@ -152,6 +152,10 @@ class AppiumBaseHelper():
         text = self.wait.until(EC.presence_of_element_located((By.ID, id)))
         return text.text
 
+    def get_id_with_class(self,classname):
+        id = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, classname)))
+        return id.id
+
     def capture_screen(self, prefix):
         self.driver.save_screenshot(prefix+'_screenshot.png')
         with open(prefix+"_page_source.xml", "w") as xml_file:
