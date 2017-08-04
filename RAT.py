@@ -434,6 +434,7 @@ class LiveTests(BaseTests):
             self.sociushelper.click_require_permission_button()
             for x in range(10):
                 #go to live in discover
+                #需要先有一個帳號開直播 直播名稱為 test stream 才可以正常運作
                 self.sociushelper.gotochat_with_discovery()
                 #viewer test 
                 self.sociushelper.chat_live("i love this game")
