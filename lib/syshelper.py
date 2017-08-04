@@ -77,7 +77,7 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
             if "Snake Off" in el.text:
                 el.click()
                 return
-        raise NoSuchElementException('could not identify soocii in recent apps')
+        raise NoSuchElementException('could not identify snake off in recent apps')
 
 
     def start_setting_page(self):
