@@ -323,14 +323,9 @@ class DiscoveryAndSupportTests(BaseTests):
             
     def test_discoverytap(self):
         try:
-            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
-            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
-
-            # Facebook Login button on Soocii
-            self.sociushelper.click_facebook_login_button()
-            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
-
-            # confirm acquiring permission dialog
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
             self.sociushelper.click_require_permission_button()
 
             self.sociushelper.swipe_discover()
@@ -344,7 +339,7 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.click_onlinevideocard()
 
-            self.sociushelper.click_videocard()
+            self.sociushelper.click_videocard()#error
 
             self.sociushelper.swipe_refresh()
             self.sociushelper.swipe_refresh()
@@ -359,15 +354,12 @@ class DiscoveryAndSupportTests(BaseTests):
 
     def test_zendesk(self):
         try:
-            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
-            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
-
-            # Facebook Login button on Soocii
-            self.sociushelper.click_facebook_login_button()
-            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
-
-            # confirm acquiring permission dialog
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
             self.sociushelper.click_require_permission_button()
+
+
 
             self.sociushelper.swipe_to_support()
 
@@ -429,7 +421,7 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_like()#click like
             check_b = self.sociushelper.check_like_num() # (b) to get like of number  
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
-            self.sociushelper.swipe_like()#click like ,let like number = 0
+            self.sociushelper.swipe_like()#click like ,let like = 0
             self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
             self.assertTrue(self.sociushelper.is_message())#if message visibility
             self.syshelper.press_back_key()
@@ -451,6 +443,7 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_to_aboutme()
             self.sociushelper.swipe_posts()#click share button
             self.sociushelper.swpie_share_posts()#click share posts button
+            self.sociushelper.swipe_share_posts_to_soocii()
             self.sociushelper.input_send_share_message()#input message and click send button
             self.sociushelper.swipe_refresh()
 
@@ -460,13 +453,15 @@ class PostsTests(BaseTests):
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_open_live")
+            self.syshelper.capture_screen("test_share_posts")
             raise
         finally:
             pass
 
     def test_upload_picture(self):
         try:
+
+            nofile()#delete all file
             accounthelper = AccountHelper()
 
             # Create new account button on Soocii
@@ -484,7 +479,6 @@ class PostsTests(BaseTests):
             self.sociushelper.click_require_permission_button()
 
 
-            nofile()#delete all file
             self.sociushelper.swipe_to_aboutme()
 
             self.sociushelper.click_share_picture()#click image button in about me,and share photo 
@@ -494,19 +488,21 @@ class PostsTests(BaseTests):
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_open_live")
+            self.syshelper.capture_screen("test_upload_picture")
             raise
         finally:
             pass
 
     def test_check_and_share_record(self):
         try:
+
+            nofile()#clear all file
+            
             
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
                 
             self.sociushelper.click_require_permission_button()
-            nofile()#clear all file
             havefile()#put file to test case (photo and viedo)
             
             self.sociushelper.swipe_to_aboutme()
@@ -518,7 +514,7 @@ class PostsTests(BaseTests):
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_open_live")
+            self.syshelper.capture_screen("test_check_and_share_record")
             raise
         finally:
             pass

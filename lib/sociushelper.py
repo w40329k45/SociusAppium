@@ -89,7 +89,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def click_videocard(self):
         # self.swipe_loading()
         # self.swipe_loading()
-        self.click_button_with_id("rl_post_card")
+        self.click_button_with_id("rl_post_card")#error
         self.wait_transition(2)
         self.press_back_key()
 
@@ -203,7 +203,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return
 
     def swipe_to_aboutme(self):
-        self.wait_transition(1.5)
+        self.wait_transition(2)
         self.click_textview_with_id("icon_profile")
 
     def swipe_to_support(self):
@@ -379,8 +379,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 elname=el.text
                 if el.text not in d:
                     d.append(el.text)
-
                     el.click()
+
                     self.wait_transition(2.5)
 
                     videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
@@ -395,11 +395,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                     self.wait_transition(2.5)
                     self.press_back_key()
                     self.wait_transition(2.5)
-                else:
-                    return
             self.swipe_hash()
             self.wait_transition(2.5)
+            
             items = self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+            if str(items[len(items)-1]) == str(d[len(d)-1]):
+                return True
 
     def check_zendesk(self):
         self.assertTrue(self.is_FAQ())
@@ -519,12 +520,16 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_picture()
 
         select_Album_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.RelativeLayout")))
-        select_picture_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
-
-
+        
+    
         select_Album_bt[1].click()#select album and click
         self.wait_transition(1.5)
 
+        if self.isAndroid5():
+            select_picture_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+        else:
+            select_picture_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
+        #have a bug
         select_picture_bt[0].click()#select picture and click
         self.wait_transition(1.5)   
 
