@@ -242,7 +242,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def swipe_choose_video(self):
         self.wait_transition(2)
-        self.click_textview_with_text([u"影音","Viedo"])
+        self.click_textview_with_text([u"影音","Video"])
 
     def swipe_posts(self):# today
         #soocii & local ID is deffirend 
@@ -562,7 +562,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         photofolder[0].click()
         self.wait_transition(2)
         #choose video
-        avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+        if self.isAndroid5():
+            avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+        else:
+            avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
         avideo[1].click()
         self.wait_transition(2)
 

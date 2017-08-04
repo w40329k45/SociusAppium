@@ -46,7 +46,7 @@ def nofile():
 
 #putin testfile
 def havefile():
-    subprocess.Popen(['adb', 'push', config.VIDEO_PHOTO_DIR_PATH, '/sdcard/Soocii/'])     
+    subprocess.Popen(['adb', 'push', config.VIDEO_PHOTO_DIR_PATH, '/sdcard/Soocii/'])
 
 class BaseTests(unittest.TestCase):
     def setUp(self):
@@ -309,7 +309,7 @@ class DiscoveryAndSupportTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_allpage")
             raise
-            
+
     def test_discoverytap(self):
         try:
             expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
@@ -339,7 +339,7 @@ class DiscoveryAndSupportTests(BaseTests):
             self.sociushelper.swipe_refresh()
 
             self.sociushelper.check_hashtag()
-            
+
 
         except Exception as e:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
@@ -376,7 +376,7 @@ class LiveTests(BaseTests):
             # #login_with_email
             # self.sociushelper.click_login_by_email_link()
             # self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
-            
+
             # self.sociushelper.click_require_permission_button()
 
             expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
@@ -413,7 +413,7 @@ class LiveTests(BaseTests):
             raise
         finally:
             pass
-            
+
 class PostsTests(BaseTests):
     def test_edit_posts(self):
         havefile()
@@ -471,7 +471,7 @@ class PostsTests(BaseTests):
             self.sociushelper.new_local_video_post()
 
 
-            
+
         except:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_firstposts")
@@ -482,17 +482,17 @@ class PostsTests(BaseTests):
 
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
-                
+
             self.sociushelper.click_require_permission_button()
 
             self.sociushelper.swipe_to_aboutme()
             self.sociushelper.swipe_posts()#into  single posts
-            check_a = self.sociushelper.check_like_num() # (a) to get like of number  
+            check_a = self.sociushelper.check_like_num() # (a) to get like of number
             self.sociushelper.swipe_like()#click like
-            check_b = self.sociushelper.check_like_num() # (b) to get like of number  
+            check_b = self.sociushelper.check_like_num() # (b) to get like of number
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
             self.sociushelper.swipe_like()#keep like
-            self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
+            self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button
             self.assertTrue(self.sociushelper.is_message())#if message visibility
             self.syshelper.press_back_key()
         except :
@@ -511,12 +511,12 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_to_aboutme()
             self.sociushelper.swipe_posts()#click share button
             self.sociushelper.swpie_share_posts()#click share posts button
+            self.sociushelper.swipe_share_posts_to_soocii()
             self.sociushelper.input_send_share_message()#input message and click send button
             self.sociushelper.swipe_refresh()
 
-            self.assertTrue(self.sociushelper.chech_share_posts())#make sure 
+            self.assertTrue(self.sociushelper.chech_share_posts())#make sure
 
-            
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
@@ -544,6 +544,3 @@ class PostsTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_share_posts_to_otherapp")
             raise
-
-        
-
