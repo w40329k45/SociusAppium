@@ -445,7 +445,7 @@ class LiveTests(BaseTests):
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("teat_viewer")
+            self.syshelper.capture_screen("test_viewer")
             raise
 
 class PostsTests(BaseTests):
