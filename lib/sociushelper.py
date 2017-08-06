@@ -216,6 +216,28 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def swipe_loading(self):
         self.swipe_up(350)
 
+    def swipe_edit(self):
+        left_x = self.window_size["width"] * 0.06
+        right_x = self.window_size["width"] * 0.5
+        center_y = self.window_size["height"] * 0.9
+        self.driver.swipe(start_x=left_x, start_y=center_y, end_x=right_x, end_y=center_y, duration=500)
+        self.wait_transition(1)
+
+    def swipe_edit_back(self):
+        left_x = self.window_size["width"] * 0.06
+        right_x = self.window_size["width"] * 0.5
+        center_y = self.window_size["height"] * 0.9
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=350)
+        self.wait_transition(1)
+
+    def edit_cover(self):
+        left_x = self.window_size["width"] * 0.06
+        right_x = self.window_size["width"] * 0.5
+        center_y = self.window_size["height"] * 0.9
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=350)
+        self.wait_transition(1)
+
+
     def swipe_posts(self):# today
         self.wait_transition(2.5)
         posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
@@ -376,6 +398,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_button_with_id("add_follow_confirm")
 
     def click_camera_floatball(self):
+        self.wait_transition(5)
         #dp=px*160/dpi
         #px=dp*dpi/160
         center_x = self.window_size["width"]
@@ -419,7 +442,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def stop_live(self):
         self.click_button_with_id("iv_menu_icon_stop")
-        self.wait_transition(1)
+        self.wait_transition(5)
 
     def go_to_post(self):
         self.click_button_with_id("tv_go")    
@@ -450,6 +473,122 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1.5)
         self.press_back_key()
         self.wait_transition(1)
+
+    def edit_live_record(self):
+        x = self.window_size["width"] * 0.8
+        y = self.window_size["height"] * 0.15
+        self.swipe_edit()
+        self.swipe_edit_back()
+        self.wait_transition(2)
+        self.driver.tap([(x,y)],500)
+        self.wait_transition(2)
+        self.edit_cover()
+        self.wait_transition(3)
+
+
+    def edit_next(self):
+        x = self.window_size["width"] * 0.9
+        y = self.window_size["height"] * 0.1
+        self.driver.tap([(x,y)],500)
+
+    def download_live_record(self):
+
+        self.click_button_with_id("tv_download")
+        self.wait_transition(10)
+        self.press_home_key()
+        self.wait_transition(1)
+        self.driver.open_notifications()
+        self.wait_transition(1)
+        #self.swipe()
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'Check text view: {}'.format(el.text))
+            if el.text == "Tap to edit":
+                self.logger.info(u'Found text view: {}'.format(el.text))
+                self.wait_transition(2)
+                self.click_textview_with_text(["Tap to edit","Tap to edit"])
+                self.wait_transition(1)
+                return
+        # Expand Soocii notification
+        for el in items:
+            if "Soocii" in el.text:
+                el.click()
+                self.wait_transition(1)
+                #Click on "Soocii Logger"
+                items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+                for el in items:
+                    if el.text == "Tap to edit":
+                        el.click()
+                        self.wait_transition(1)
+                        return
+        self.wait_transition(1) 
+
+    def goto_RTMP(self):
+        self.swipe_to_newsfeed()
+        self.wait_transition(30)
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'Check text view: {}'.format(el.text))
+            if el.text == "test stream":
+                self.logger.info(u'Found text view: {}'.format(el.text))
+                self.wait_transition(2)
+                self.click_textview_with_text(["test stream","test stream"])
+                self.wait_transition(1)
+                return
+
+    def gotochat_with_discovery(self):
+        self.swipe_discover()
+        x=1
+        while x==1:
+            items = self.wait.until(EC.presence_of_all_elements_located((By.ID, "tv_streaming_message")))
+            for el in items:
+                self.logger.info(u'Check text view: {}'.format(el.text))
+                if el.text == "test stream":
+                    self.logger.info(u'Found text view: {}'.format(el.text))
+                    el.click()
+                    x=2
+                    return
+
+                  
+    def chat_live(self,a):
+        x = self.window_size["width"] * 0.5
+        y = self.window_size["height"] * 0.5            
+        self.wait_transition(20)
+        self.driver.tap([(x,y)],350)
+        self.wait_transition(2)
+        self.click_button_with_id("messageEditText")
+        self.wait_transition(2)
+        self.send_text_with_id("messageEditText", a)
+        self.logger.info('sent message: {}'.format(a))
+        self.click_button_with_id("sendButton")
+        self.wait_transition(1)
+
+    def click_sharelink_button(self):
+        self.click_button_with_id("shareButton")
+        self.wait_transition(5)
+        self.press_back_key()
+
+    def click_viewer_button(self):
+        self.wait_transition(5)
+        self.click_button_with_id("img_btn_check_viewers")
+        self.wait_transition(1)
+
+    def leave_live(self):
+        self.press_back_key()
+        self.press_back_key()
+        self.wait_transition(2)
+    
+
+    def check_viewer_name(self):
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'Check text view: {}'.format(el.text))
+            if el.text == "chnnnnnnnb":
+                self.logger.info(u'Found text view: {}'.format(el.text))
+                self.wait_transition(2)
+                return True
+        return False   
+
 
 
     

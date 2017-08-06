@@ -9,6 +9,7 @@ import pytest
 import logging
 import unittest
 import subprocess
+import time
 
 from appium import webdriver
 
@@ -392,9 +393,61 @@ class LiveTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_open_live")
             raise
-        finally:
-            pass
+    def test_download(self):
+        try:
+            #login_with_email
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
             
+            self.sociushelper.click_require_permission_button()
+            #open_streaming 10 times
+            for x in range(10):
+                self.sociushelper.click_open_fab_button()
+                self.sociushelper.choice_game()
+                self.sociushelper.setting_live()
+                self.sociushelper.click_camera_floatball()
+                self.sociushelper.stop_live()
+                self.sociushelper.go_to_post()
+                #download live record and edit
+                self.sociushelper.download_live_record()
+                self.sociushelper.edit_live_record()
+                self.sociushelper.edit_next()
+                #get time
+                localtime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                self.sociushelper.share_live_record(localtime+"download",x)
+                self.syshelper.start_snake_off()
+                self.sociushelper.click_camera_floatball()
+                self.sociushelper.back_soocii()
+                self.sociushelper.swipe_to_aboutme()
+                self.sociushelper.refresh_aboutme()
+              
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_download")
+            raise
+
+    def test_viewer(self):
+        try:            
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            self.sociushelper.click_require_permission_button()
+            for x in range(10):
+                #go to live in discover
+                #需要先有一個帳號開直播 直播名稱為 test stream 才可以正常運作
+                self.sociushelper.gotochat_with_discovery()
+                #viewer test 
+                self.sociushelper.chat_live("i love this game")
+                self.sociushelper.click_sharelink_button()
+                self.sociushelper.click_viewer_button()
+                self.assertTrue(self.sociushelper.check_viewer_name())
+                self.sociushelper.click_viewer_button()
+                self.sociushelper.leave_live()
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_viewer")
+            raise
 
 class PostsTests(BaseTests):
     def test_comments(self):
