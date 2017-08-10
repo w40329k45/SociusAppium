@@ -70,6 +70,16 @@ class SysHelper(unittest.TestCase, AppiumBaseHelper):
                 return
         raise NoSuchElementException('could not identify soocii in recent apps')
 
+    def start_snake_off(self):
+        self.press_recent_apps_key()
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            if "Snake Off" in el.text:
+                el.click()
+                return
+        raise NoSuchElementException('could not identify snake off in recent apps')
+
+
     def start_setting_page(self):
         self.driver.start_activity('com.android.settings', 'com.android.settings.Settings')
 
