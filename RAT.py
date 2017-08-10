@@ -340,7 +340,7 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.click_onlinevideocard()
 
-            self.sociushelper.click_videocard()#error
+            self.sociushelper.click_videocard()
 
             self.sociushelper.swipe_refresh()
             self.sociushelper.swipe_refresh()
