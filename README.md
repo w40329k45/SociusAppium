@@ -31,7 +31,7 @@ export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/b
 
 * Uiautomatorviewer
     * a tool to inspect app resource id, class name, text
-    * (OSX) ~/Library/Android/sdk/tools/
+    * (OSX) ~/Library/Android/sdk/tools/ (Android Studio 2.3版)~/Library/Android/sdk/tools/bin
 
 * Appium Inspector
     * a tool to inspect app resource id, class name, text and xpath
