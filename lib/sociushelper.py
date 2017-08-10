@@ -742,3 +742,71 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 self.wait_transition(2)
                 return True
         return False
+
+
+
+    def goto_RTMP(self):
+        self.swipe_to_newsfeed()
+        self.wait_transition(30)
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'Check text view: {}'.format(el.text))
+            if el.text == "test stream":
+                self.logger.info(u'Found text view: {}'.format(el.text))
+                self.wait_transition(2)
+                self.click_textview_with_text(["test stream","test stream"])
+                self.wait_transition(1)
+                return
+
+    def gotochat_with_discovery(self):
+        self.swipe_discover()
+        x=1
+        while x==1:
+            items = self.wait.until(EC.presence_of_all_elements_located((By.ID, "tv_streaming_message")))
+            for el in items:
+                self.logger.info(u'Check text view: {}'.format(el.text))
+                if el.text == "test stream":
+                    self.logger.info(u'Found text view: {}'.format(el.text))
+                    el.click()
+                    x=2
+                    return
+
+
+    def chat_live(self,a):
+        x = self.window_size["width"] * 0.5
+        y = self.window_size["height"] * 0.5
+        self.wait_transition(20)
+        self.driver.tap([(x,y)],350)
+        self.wait_transition(2)
+        self.click_button_with_id("messageEditText")
+        self.wait_transition(2)
+        self.send_text_with_id("messageEditText", a)
+        self.logger.info('sent message: {}'.format(a))
+        self.click_button_with_id("sendButton")
+        self.wait_transition(1)
+
+    def click_sharelink_button(self):
+        self.click_button_with_id("shareButton")
+        self.wait_transition(5)
+        self.press_back_key()
+
+    def click_viewer_button(self):
+        self.wait_transition(5)
+        self.click_button_with_id("img_btn_check_viewers")
+        self.wait_transition(1)
+
+    def leave_live(self):
+        self.press_back_key()
+        self.press_back_key()
+        self.wait_transition(2)
+
+
+    def check_viewer_name(self):
+        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
+        for el in items:
+            self.logger.info(u'Check text view: {}'.format(el.text))
+            if el.text == "chnnnnnnnb":
+                self.logger.info(u'Found text view: {}'.format(el.text))
+                self.wait_transition(2)
+                return True
+        return False
