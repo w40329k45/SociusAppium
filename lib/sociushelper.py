@@ -342,9 +342,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         finally:
             if shoth is None:
                 return False
-            self.press_back_key()
-            return True
-
+            else:
+                self.press_back_key()
+                return True
+                
 
     def chech_share_posts(self):
         if self.get_text_with_id("tv_msg") in "this is share post testing":
