@@ -314,7 +314,7 @@ class DiscoveryAndSupportTests(BaseTests):
             self.assertTrue(self.sociushelper.check_suggest())
 
             self.sociushelper.swipe_to_SearchId()
-            self.sociushelper.get_idsearch()
+            self.sociushelper.get_idsearch("scheng1")
             self.sociushelper.swipe_discover()
             self.sociushelper.swipe_refresh()
         except:
@@ -368,7 +368,7 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.check_faq()
 
-            self.sociushelper.check_contact()
+            self.sociushelper.check_contact("ignore this ! automation test!")
         except Exception as e:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_zendesk")
@@ -475,7 +475,7 @@ class PostsTests(BaseTests):
             check_b = self.sociushelper.check_like_num() # (b) to get like of number  
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
             self.sociushelper.swipe_like()#click like ,let like = 0
-            self.sociushelper.swipe_and_send_message()#input message to share_EditText ,and click send button 
+            self.sociushelper.swipe_and_send_message("this is qa message")#input message to share_EditText ,and click send button 
             self.assertTrue(self.sociushelper.is_message())#if message visibility
             self.syshelper.press_back_key()
 
@@ -497,7 +497,7 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_posts()#click share button
             self.sociushelper.swpie_share_posts()#click share posts button
             self.sociushelper.swipe_share_posts_to_soocii()
-            self.sociushelper.input_send_share_message()#input message and click send button
+            self.sociushelper.input_send_share_message("this is share post testing")#input message and click send button
             self.sociushelper.swipe_refresh()
 
             self.assertTrue(self.sociushelper.chech_share_posts())#make sure 

@@ -272,11 +272,11 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1)
 
         
-    def swipe_and_send_message(self):
+    def swipe_and_send_message(self,text):
         message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"message_edit_text")))
         message_bt.click()
         self.wait_transition(1)
-        self.send_text_with_id("message_edit_text","this is qa message")
+        self.send_text_with_id("message_edit_text",text)
         self.wait_transition(1.5)
         send_message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"outbox")))
         send_message_bt.click()
@@ -319,8 +319,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         else:
             return True
 
-    def get_idsearch(self):
-        self.send_text_with_id("input_soocii_id_text","scheng1")
+    def get_idsearch(self,text):
+        self.send_text_with_id("input_soocii_id_text",text)
         self.wait_transition(1.5)
         self.press_back_key()
 
@@ -438,13 +438,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(2)
         self.press_back_key()
 
-    def check_contact(self):
+    def check_contact(self,text):
         self.swipe_to_contact()
         self.click_textview_with_id("activity_request_list_add_icon")
         bbt=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.widget.ImageButton")))
         bbt.click()
         self.click_textview_with_id("activity_request_list_add_icon")
-        self.send_text_with_id("contact_fragment_description","ignore this ! automation test!")
+        self.send_text_with_id("contact_fragment_description",text)
         self.wait_transition(1.5)
         self.click_textview_with_id("fragment_contact_zendesk_menu_done")
         self.wait_transition(1.5)
@@ -534,8 +534,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_down(350)
         self.wait_transition(3)
 
-    def input_send_share_message(self):
-        self.send_text_with_id("upload_edittext","this is share post testing")
+    def input_send_share_message(self,text):
+        self.send_text_with_id("upload_edittext",text)
         self.wait_transition(1.5)
         self.click_textview_with_id("action_share")
         self.wait_transition(1.5)
