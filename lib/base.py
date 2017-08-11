@@ -149,6 +149,11 @@ class AppiumBaseHelper():
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
         self.wait_transition(0.5)
 
+    def swipe_longtap(self):
+        center_x=self.window_size["width"]*0.36
+        center_y=self.window_size["height"]*0.31
+        self.driver.swipe(start_x=center_x,start_y=center_y,end_x=center_x,end_y=center_y,duration=2000)
+        self.wait_transition(4)
     def get_time(self):
         a = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         return a
