@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #coding=utf-8
 import unittest
 
@@ -141,11 +142,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
-    def is_message(self):# today
-        check = self.wait.until(EC.presence_of_all_elements_located((By.ID,"rootLayout")))
-        if check is None:
-            return False
-        return True
+    def is_message(self,text):# today
+        check = self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_comment_msg")))
+        cname=check[len(check)-1].text
+        cname.index(text)
 
     def is_discover(self):
         return self.__visibility_of_textview(["Discovery", u"探索"])
@@ -283,15 +283,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1)
 
 
-    def swipe_and_send_message(self):# today
+    def swipe_and_send_message(self,text):# today
         message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"message_edit_text")))
         message_bt.click()
         self.wait_transition(1)
-        self.send_text_with_id("message_edit_text","this is qa message")
+        self.send_text_with_id("message_edit_text",text)
         self.wait_transition(1.5)
-        send_message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"outbox")))
-        send_message_bt.click()
-        self.wait_transition(1.5)
+        self.click_button_with_id("outbox")
+        self.wait_transition(3)
 
     def swipe_aboutme_video(self):#today
         video_bt = self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video")))
@@ -300,6 +299,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         video_bt[0].click()
         self.wait_transition(2)
 
+    def swipe_videounit(self):
+        self.wait_transition(2)
+        self.click_button_with_id("svv_preview")
+
+    def swipe_to_msg(self):
+        self.wait_transition(2)
+        self.click_button_with_id("tv_comments")
 
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
@@ -343,13 +349,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             return True
         return False
 
-    def check_like_num(self):#today
+    def check_like_num(self,text):#today
         check_like_tv = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.TextView")))
         self.wait_transition(0.5)
         for items in check_like_tv:
-            if "like" in items.text:
+            if text[0] in items.text:
                 return items.text.split(" ")[0]
-            elif u"個棒" in items.text:
+            elif text[1] in items.text:
                 return items.text.split(" ")[0]
 
     def check_aboutme(self,exdisplayname):
@@ -442,6 +448,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def check_video_unit(self):
+        self.swipe_videounit()
+        self.wait_transition(1)
+        vc=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.view.View")))
+        if vc is None:
+            return False
+        return  True
+
     def click_choose_album(self):
         self.click_textview_with_text([u"相簿","Photos"])
 
@@ -482,6 +496,15 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_textview_with_id("tv_share")#click share button
         self.wait_transition(1.5)
 
+    def click_searchid(self):
+        self.send_text_with_id("input_soocii_id_text","scheng1")
+        self.wait_transition(2)
+        self.click_button_with_id("fans_list_photo_image_view")
+        self.wait_transition(2)
+
+    def click_video_pause(self):
+        self.wait_transition(2)
+        self.click_button_with_id("exo_pause")
 
     def choice_game(self):
         self.click_textview_with_text(["Snake Off","Snake Off"])
