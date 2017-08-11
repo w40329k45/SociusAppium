@@ -1,5 +1,5 @@
 
-
+# -*- coding: utf-8 -*-
 
 #coding=utf-8
 import os
@@ -24,6 +24,8 @@ PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
+path1 = "../SociusAppium/test_resources/."
+
 # logger
 logger = logging.getLogger()
 logFormatter = logging.Formatter(
@@ -37,9 +39,7 @@ logger.setLevel(logging.INFO)
 def getDeviceProp(prop):
     p1 = subprocess.Popen(['adb', 'shell', 'getprop'], stdout=subprocess.PIPE)
     p2 = subprocess.Popen(['grep', prop], stdin=p1.stdout, stdout=subprocess.PIPE)
-    subprocess.Popen(['cd','~/Documents/GitHub/SociusAppium/'])
         
-    subprocess.Popen(['adb','push', '*.mp4', '/sdcard/Soocii'])
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     line = p2.communicate()[0]
     # parse value
@@ -53,7 +53,7 @@ def nofile():
 
 #putin testfile
 def havefile():
-    subprocess.Popen(['adb', 'push', config.VIEDO_PHOTO__DIR_PATH, '/sdcard/Soocii/'])
+    subprocess.Popen(['adb', 'push', os.path.abspath(path1)+"/.", '/sdcard/Soocii/'])
 
 
 class BaseTests(unittest.TestCase):
@@ -313,6 +313,7 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.swipe_to_SearchId()
             self.sociushelper.get_idsearch("scheng1")
+            self.sociushelper.go_back()
             self.sociushelper.swipe_discover()
             self.sociushelper.swipe_refresh()
         except:
@@ -620,16 +621,17 @@ class PostsTests(BaseTests):
             pass
 
     def test_check_and_share_record(self):
+        
         try:
-
             nofile()#clear all file
-            
             
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
             self.sociushelper.click_require_permission_button()
-
             havefile()#put file to test case (photo and viedo)
+            self.sociushelper.waitii()
+            
+            print "cccccccc :" +os.path.abspath(path1)
             
             self.sociushelper.swipe_to_aboutme()
 
@@ -659,3 +661,61 @@ class PostsTests(BaseTests):
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_share_posts_to_otherapp")
             raise
+
+class otherposts(BaseTests):
+    def test_posts_like_comment_share(self):
+        try:
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+                
+            # confirm acquiring permission dialog
+            self.sociushelper.click_require_permission_button()
+
+            self.sociushelper.swipe_discover()
+            self.sociushelper.swipe_to_friendlist()
+            self.sociushelper.swipe_to_SearchId()
+            self.sociushelper.get_idsearch("scheng1")
+            self.sociushelper.swipe_fans_list_photo_image_view()
+            check_c = self.sociushelper.check_like_num(["shares",u"個分享"]) # (a) to get share of number
+            self.sociushelper.swipe_posts()
+            self.sociushelper.click_single_viedo()
+            self.assertTrue(self.sociushelper.check_single_posts())
+
+          
+
+            check_a = self.sociushelper.check_like_num(["like", u"個棒"]) # (a) to get like of number
+            self.sociushelper.swipe_like()#click like
+            self.sociushelper.edit_cover()
+            check_b = self.sociushelper.check_like_num(["like", u"個棒"]) # (b) to get like of number
+
+            self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
+            self.sociushelper.swipe_like()#click like ,let like = 0
+            
+
+            self.sociushelper.click_comment()
+            self.sociushelper.swipe_and_send_message("this is msg testing")
+            self.assertTrue(self.sociushelper.is_posts_message("this is msg testing"))
+            self.sociushelper.go_back()
+            
+            self.sociushelper.edit_cover()
+            self.sociushelper.edit_cover()
+
+            self.sociushelper.swpie_share_posts()
+            self.sociushelper.swipe_share_posts_to_soocii()
+            self.sociushelper.input_send_share_message("share post testing")#input message and click send button
+            
+
+            check_d = self.sociushelper.check_like_num(["shares",u"個分享"]) # (a) to get share of number
+            self.assertTrue(check_d > check_c) #After click like_bt , compare (a) with (b) count whether +1
+
+            self.sociushelper.go_back()
+
+
+
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_posts_like_comment_share")
+            raise
+
+        

@@ -1,4 +1,5 @@
 #coding=utf-8
+# -*- coding: utf-8 -*-
 import unittest
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -53,6 +54,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                         self.wait_transition(1)
                         return
 
+    def waitii(self):
+        self.wait_transition(3)
+
     def click_revoke_facebook(self):
         self.start_logger_activity()
         self.click_button_with_id("btn_revoke_fb")
@@ -87,11 +91,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
 
     def click_videocard(self):
-        # self.swipe_loading()
-        # self.swipe_loading()
-        self.click_button_with_id("rl_post_card")#error
+        self.click_button_with_id("rl_post_card")
         self.wait_transition(2)
         self.press_back_key()
+
+    def click_comment(self):
+        self.click_textview_with_id("tv_comments")
+        self.wait_transition(1.5)
 
     def skip_floating_ball_guide_mark(self):
         el = self.wait.until(EC.presence_of_element_located((By.ID, "permission_video")))
@@ -142,6 +148,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def is_posts_message(self,text):
+        return self.__visibility_of_textview(text)
+
     def is_message(self):
         check = self.wait.until(EC.presence_of_all_elements_located((By.ID,"rootLayout")))
         if check is None:
@@ -162,6 +171,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def is_Contact(self):
         return self.__visibility_of_textview(["Contact", u"聯絡我們"])
+
+    def is_viedo_like_comment_share(self):
+        return self.__visibility_of_textview(["like", u"個棒"])
 
     def is_faqwebview(self):
         wv=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.webkit.WebView")))
@@ -275,7 +287,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         right_x = self.window_size["width"] * 0.5
         center_y = self.window_size["height"] * 0.9
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=350)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
 
 
@@ -292,7 +304,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1)
 
     def swipe_like(self):
-        self.wait_transition(1)
         like_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_like")))
         like_bt.click()
         self.wait_transition(1)
@@ -321,6 +332,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_button_with_id("menu_share_to_other")
         self.wait_transition(1) 
 
+    def swipe_fans_list_photo_image_view(self):
+        fansbt = self.wait.until(EC.presence_of_element_located((By.ID,"fans_list_photo_image_view")))
+        fansbt.click()
+        self.wait_transition(1.5)
 
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
@@ -350,7 +365,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def get_idsearch(self,text):
         self.send_text_with_id("input_soocii_id_text",text)
         self.wait_transition(1.5)
+
+        
+
+    def go_back(self):
         self.press_back_key()
+        self.wait_transition(1.5)
 
     def get_videocard(self):
         videocard=self.wait.until(EC.presence_of_element_located((By.ID,"rl_post_card")))
@@ -389,14 +409,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
 
 
-    def check_like_num(self):
+    def check_like_num(self,text):
         check_like_tv = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.TextView")))
-        self.wait_transition(0.5)
         for items in check_like_tv:
-            if "like" in items.text:
+            if text[0] in items.text:
                 return items.text.split(" ")[0]
-            elif u"個棒" in items.text:
+            elif text[1] in items.text:
                 return items.text.split(" ")[0]
+
 
     def check_aboutme(self,exdisplayname):
         self.swipe_to_aboutme()
@@ -490,6 +510,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def click_single_viedo(self):
+        
+        single_viedo_bt=self.wait.until(EC.presence_of_element_located((By.ID,"svv_preview")))
+        single_viedo_bt.click()
+        self.wait_transition(2.5)
+
     def click_choose_album(self):
         self.click_textview_with_text([u"相簿","Photos"])
 
@@ -530,6 +556,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
         self.click_textview_with_id("tv_share")#click share button
         self.wait_transition(1.5)
+
+    # def click_posts(self):
+    #     posts_bt=self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
 
 
     def choice_game(self):
@@ -585,6 +614,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_down(350)
         self.wait_transition(3)
 
+    def check_single_posts(self):
+        
+        postview=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.view.View")))
+        self.wait_transition(0.5)
+        if postview is None:
+            return False
+        return True
     def check_post_title(self,text):
         #check title
         postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
