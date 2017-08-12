@@ -1,4 +1,5 @@
 #coding=utf-8
+# -*- coding: utf-8 -*-
 import unittest
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -53,6 +54,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                         self.wait_transition(1)
                         return
 
+    def waitii(self):
+        self.wait_transition(3)
+
     def click_revoke_facebook(self):
         self.start_logger_activity()
         self.click_button_with_id("btn_revoke_fb")
@@ -79,6 +83,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.click_textview_with_text([u"確認","Confirm"])
         # allow all system permissions
         self.allow_system_permissions(4)
+        self.wait_transition(1)
 
     def click_onlinevideocard(self):
         self.click_button_with_id("iv_thumbnail")
@@ -86,11 +91,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
 
     def click_videocard(self):
-        # self.swipe_loading()
-        # self.swipe_loading()
         self.click_button_with_id("rl_post_card")
         self.wait_transition(2)
         self.press_back_key()
+
+    def click_comment(self):
+        self.click_textview_with_id("tv_comments")
+        self.wait_transition(1.5)
 
     def skip_floating_ball_guide_mark(self):
         el = self.wait.until(EC.presence_of_element_located((By.ID, "permission_video")))
@@ -141,7 +148,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
-    def is_message(self):# today
+    def is_posts_message(self,text):
+        return self.__visibility_of_textview(text)
+
+    def is_message(self):
         check = self.wait.until(EC.presence_of_all_elements_located((By.ID,"rootLayout")))
         if check is None:
             return False
@@ -162,13 +172,26 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def is_Contact(self):
         return self.__visibility_of_textview(["Contact", u"聯絡我們"])
 
+    def is_viedo_like_comment_share(self):
+        return self.__visibility_of_textview(["like", u"個棒"])
+
     def is_faqwebview(self):
         wv=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.webkit.WebView")))
         if wv is None:
             return False
         return True
 
-    def swpie_share_posts(self):# today
+    def swipe_makesure(self):
+        self.wait_transition(2)
+        self.click_button_with_id("add_follow_confirm")
+        self.wait_transition(1)
+
+
+    def swipe_picture(self):
+        self.click_textview_with_text(["Image",u"圖片"])
+        self.wait_transition(1)
+
+    def swpie_share_posts(self):
         self.click_textview_with_id("tv_shares")
         self.wait_transition(1)
 
@@ -232,6 +255,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(2)
         self.swipe_up(350)
 
+
     def swipe_post_sandwish(self):
         self.wait_transition(2)
         self.click_button_with_id("iv_more")
@@ -243,6 +267,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def swipe_choose_video(self):
         self.wait_transition(2)
         self.click_textview_with_text([u"影音","Video"])
+
     def swipe_edit(self):
         left_x = self.window_size["width"] * 0.06
         right_x = self.window_size["width"] * 0.5
@@ -262,44 +287,55 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         right_x = self.window_size["width"] * 0.5
         center_y = self.window_size["height"] * 0.9
         self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=350)
-        self.wait_transition(1)
+        self.wait_transition(0.5)
 
 
-    def swipe_posts(self):# today
-        #soocii & local ID is deffirend
+
+    def swipe_posts(self):
+#
         self.wait_transition(2.5)
         try:
-            posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
-        except :
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
-        finally :
-            posts_bt.click()
-            self.wait_transition(1)
+        except :
+            posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
+        finally:
+            posts_bt.click()#if first post is iv_thumbnail(viedo) or iv_screenshot (photo) ,to click
 
-    def swipe_like(self):# today
         self.wait_transition(1)
+
+    def swipe_like(self):
         like_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_like")))
         like_bt.click()
         self.wait_transition(1)
 
-
-    def swipe_and_send_message(self):# today
+        
+    def swipe_and_send_message(self,text):
         message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"message_edit_text")))
         message_bt.click()
         self.wait_transition(1)
-        self.send_text_with_id("message_edit_text","this is qa message")
+        self.send_text_with_id("message_edit_text",text)
         self.wait_transition(1.5)
         send_message_bt = self.wait.until(EC.presence_of_element_located((By.ID,"outbox")))
         send_message_bt.click()
         self.wait_transition(1.5)
 
-    def swipe_aboutme_video(self):#today
+
+    def swipe_aboutme_video(self):
         video_bt = self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video")))
         if video_bt is None:
             return False
         video_bt[0].click()
         self.wait_transition(2)
 
+
+    def swipe_share_posts_to_otherapp(self):
+        self.click_button_with_id("menu_share_to_other")
+        self.wait_transition(1) 
+
+    def swipe_fans_list_photo_image_view(self):
+        fansbt = self.wait.until(EC.presence_of_element_located((By.ID,"fans_list_photo_image_view")))
+        fansbt.click()
+        self.wait_transition(1.5)
 
     def get_newsfeed_info(self):
         self.swipe_to_newsfeed()
@@ -326,10 +362,15 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         else:
             return True
 
-    def get_idsearch(self):
-        self.send_text_with_id("input_soocii_id_text","scheng1")
+    def get_idsearch(self,text):
+        self.send_text_with_id("input_soocii_id_text",text)
         self.wait_transition(1.5)
+
+        
+
+    def go_back(self):
         self.press_back_key()
+        self.wait_transition(1.5)
 
     def get_videocard(self):
         videocard=self.wait.until(EC.presence_of_element_located((By.ID,"rl_post_card")))
@@ -338,19 +379,44 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         else:
             return True
 
+    def check_share_otherapp_posts(self):
+        self.swipe_posts()
+        self.swpie_share_posts()
+        self.swipe_share_posts_to_otherapp()
+        try:
+            shoth=self.wait.until(EC.presence_of_element_located((By.ID,"title")))
+        except:
+            shoth=self.wait.until(EC.presence_of_element_located((By.ID,"title_default")))
+        finally:
+            if shoth is None:
+                return False
+            else:
+                self.press_back_key()
+                return True
+
+
     def chech_share_posts(self):
         if self.get_text_with_id("tv_msg") in "this is share post testing":
             return True
         return False
 
-    def check_like_num(self):#today
+    
+    def check_and_refresh_share_posts(self,text):
+        for x in range(3):
+            self.swipe_refresh()
+            self.wait_transition(3)
+        self.check_post_title(text)
+
+
+
+    def check_like_num(self,text):
         check_like_tv = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.TextView")))
-        self.wait_transition(0.5)
         for items in check_like_tv:
-            if "like" in items.text:
+            if text[0] in items.text:
                 return items.text.split(" ")[0]
-            elif u"個棒" in items.text:
+            elif text[1] in items.text:
                 return items.text.split(" ")[0]
+
 
     def check_aboutme(self,exdisplayname):
         self.swipe_to_aboutme()
@@ -386,8 +452,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 elname=el.text
                 if el.text not in d:
                     d.append(el.text)
-
                     el.click()
+
                     self.wait_transition(2.5)
 
                     videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
@@ -402,11 +468,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                     self.wait_transition(2.5)
                     self.press_back_key()
                     self.wait_transition(2.5)
-                else:
-                    return
             self.swipe_hash()
             self.wait_transition(2.5)
+            
             items = self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
+            if str(items[len(items)-1]) == str(d[len(d)-1]):
+                return True
 
     def check_zendesk(self):
         self.assertTrue(self.is_FAQ())
@@ -419,7 +486,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(2)
         self.press_back_key()
 
-    def check_contact(self):
+    def check_contact(self,text):
         self.swipe_to_contact()
         #click add button
         self.click_textview_with_id("activity_request_list_add_icon")
@@ -427,11 +494,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         bbt.click()
         #click add button
         self.click_textview_with_id("activity_request_list_add_icon")
-        self.send_text_with_id("contact_fragment_description","ignore this ! automation test!")
+        self.send_text_with_id("contact_fragment_description",text)
         self.wait_transition(1.5)
         self.click_textview_with_id("fragment_contact_zendesk_menu_done")
         self.wait_transition(1.5)
         self.press_back_key()
+        
 
     def check_video_and_photo_icon(self):
         vpicons=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_action")))
@@ -442,6 +510,12 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                 return True
         return False
 
+    def click_single_viedo(self):
+        
+        single_viedo_bt=self.wait.until(EC.presence_of_element_located((By.ID,"svv_preview")))
+        single_viedo_bt.click()
+        self.wait_transition(2.5)
+
     def click_choose_album(self):
         self.click_textview_with_text([u"相簿","Photos"])
 
@@ -451,6 +525,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
     def click_confirm_recommended_celebrity(self):
         # wait for recommended list is loaded
         self.wait_transition(8)
+
         self.click_button_with_id("add_follow_confirm")
         self.wait_transition(3)
 
@@ -481,6 +556,9 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
         self.click_textview_with_id("tv_share")#click share button
         self.wait_transition(1.5)
+
+    # def click_posts(self):
+    #     posts_bt=self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
 
 
     def choice_game(self):
@@ -536,6 +614,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.swipe_down(350)
         self.wait_transition(3)
 
+    def check_single_posts(self):
+        
+        postview=self.wait.until(EC.presence_of_element_located((By.CLASS_NAME,"android.view.View")))
+        self.wait_transition(0.5)
+        if postview is None:
+            return False
+        return True
     def check_post_title(self,text):
         #check title
         postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
@@ -620,14 +705,86 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #check title
         self.check_post_title("upload video from local")
 
-    def input_send_share_message(self):# today
-        self.send_text_with_id("upload_edittext","this is share post testing")
+    def input_send_share_message(self,text):
+        self.send_text_with_id("upload_edittext",text)
+
         self.wait_transition(1.5)
         self.click_textview_with_id("action_share")
         self.wait_transition(1.5)
         self.press_back_key()
         self.wait_transition(1)
 
+#
+    def click_share_picture(self):
+        self.swipe_picture()
+
+        select_Album_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.widget.RelativeLayout")))
+        
+    
+        select_Album_bt[1].click()#select album and click
+        self.wait_transition(1.5)
+
+        if self.isAndroid5():
+            select_picture_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+        else:
+            select_picture_bt = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
+        #have a bug
+        select_picture_bt[0].click()#select picture and click
+        self.wait_transition(1.5)   
+
+        self.click_textview_with_id("action_next")
+        self.wait_transition(1.5)
+
+        self.send_text_with_id("upload_edittext","upload img from local")#posts message
+        self.wait_transition(1.5)
+
+        self.click_textview_with_id("tv_share")#click share button
+        self.wait_transition(1.5)
+
+
+
+    def click_viedo_to_share(self):
+        self.swipe_aboutme_video()#click video
+
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(1)
+        self.click_button_with_id("btn_trim_complete")
+        self.wait_transition(1)#click next button x2
+
+        self.send_text_with_id("upload_edittext","video from about me")#posts message
+        self.wait_transition(1.5)
+
+        self.click_textview_with_id("tv_share")#click share button
+        self.wait_transition(1.5)
+
+    def to_record(self):
+        self.press_back_key()
+        self.wait_transition(1)
+        self.press_back_key()
+        self.wait_transition(1)
+        self.choice_game()
+        self.wait_transition(5)
+        self.click_camera_floatball()
+        self.wait_transition(1.5)
+        start_bt = self.wait.until(EC.presence_of_element_located(By.ID,"iv_menu_icon_record"))
+        # self.
+        start_bt.click()
+        self.wait_transition(10)
+        self.click_camera_floatball()
+        stop_bt = self.wait.until(EC.presence_of_element_located(By.ID,"iv_menu_icon_stop"))
+        stop_bt.click()
+        self.wait_transition(1.5)
+        back_bt = self.wait.until(EC.presence_of_element_located(By.ID,"iv_menu_icon_back"))
+        back_bt.click()
+        self.wait_transition(3.5)
+
+
+
+
+
+
+        
+#
     def edit_live_record(self):
         x = self.window_size["width"] * 0.8
         y = self.window_size["height"] * 0.15
@@ -771,6 +928,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                     x=2
                     return
 
+#
 
     def chat_live(self,a):
         x = self.window_size["width"] * 0.5
