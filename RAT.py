@@ -12,6 +12,7 @@ import time
 from appium import webdriver
 
 import config
+
 from lib.syshelper import SysHelper
 from lib.sociushelper import SociusHelper
 from lib.accounthelper import AccountHelper
@@ -20,6 +21,8 @@ from lib.accounthelper import AccountHelper
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
+
+path1 = "../SociusAppium/test_resources/."
 
 # logger
 logger = logging.getLogger()
@@ -30,14 +33,17 @@ ch.setFormatter(logFormatter)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
+
 def getDeviceProp(prop):
     p1 = subprocess.Popen(['adb', 'shell', 'getprop'], stdout=subprocess.PIPE)
     p2 = subprocess.Popen(['grep', prop], stdin=p1.stdout, stdout=subprocess.PIPE)
+
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     line = p2.communicate()[0]
     # parse value
     p = re.compile('\[ro.{}\]: \[(.+)\]'.format(prop))
     return p.findall(line)[0]
+
 
 #putout testfile
 def nofile():
@@ -45,8 +51,8 @@ def nofile():
 
 #putin testfile
 def havefile():
-    datapath="../SociusAppium3/test_resources/"
-    subprocess.Popen(['adb', 'push', os.path.abspath(datapath)+"/.", '/sdcard/Soocii/'])
+    subprocess.Popen(['adb', 'push', os.path.abspath(path1)+"/.", '/sdcard/Soocii/'])
+
 
 class BaseTests(unittest.TestCase):
     def setUp(self):
@@ -60,7 +66,6 @@ class BaseTests(unittest.TestCase):
         desired_caps['app'] = PATH(
             config.PATH_TO_TEST_APK
         )
-        # subprocess.Popen(['adb', 'shell', 'rm', '/sdcard/soocii/*.mp4', '/sdcard/soocii/*.jpeg'])
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(5)
         self.logger = logging.getLogger()
@@ -76,6 +81,9 @@ class BaseTests(unittest.TestCase):
 
         # end the session
         self.driver.quit()
+
+
+
 
 class FacebookAccountTests(BaseTests):
     # Login with existing facebook account and enable usage access once
@@ -302,7 +310,8 @@ class DiscoveryAndSupportTests(BaseTests):
             self.assertTrue(self.sociushelper.check_suggest())
 
             self.sociushelper.swipe_to_SearchId()
-            self.sociushelper.get_idsearch()
+            self.sociushelper.get_idsearch("scheng1")
+            self.sociushelper.go_back()
             self.sociushelper.swipe_discover()
             self.sociushelper.swipe_refresh()
         except:
@@ -312,14 +321,9 @@ class DiscoveryAndSupportTests(BaseTests):
 
     def test_discoverytap(self):
         try:
-            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
-            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
 
-            # Facebook Login button on Soocii
-            self.sociushelper.click_facebook_login_button()
-            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
-
-            # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
 
             self.sociushelper.swipe_discover()
@@ -348,15 +352,12 @@ class DiscoveryAndSupportTests(BaseTests):
 
     def test_zendesk(self):
         try:
-            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
-            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
 
-            # Facebook Login button on Soocii
-            self.sociushelper.click_facebook_login_button()
-            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
-
-            # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
+
+
 
             self.sociushelper.swipe_to_support()
 
@@ -364,7 +365,7 @@ class DiscoveryAndSupportTests(BaseTests):
 
             self.sociushelper.check_faq()
 
-            self.sociushelper.check_contact()
+            self.sociushelper.check_contact("ignore this ! automation test!")
         except Exception as e:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
             self.syshelper.capture_screen("test_zendesk")
@@ -390,22 +391,22 @@ class LiveTests(BaseTests):
             self.sociushelper.click_require_permission_button()
 
             #open_streaming 10 times
-            for x in range(10):
-                self.sociushelper.click_open_fab_button()
-                self.sociushelper.choice_game()
-                self.sociushelper.setting_live()
-                self.sociushelper.click_camera_floatball()
-                self.sociushelper.broadcast("hi welcome to my broadcast")
-                for y in range(3):
-                    self.sociushelper.change_camera()
-                #share post
-                self.sociushelper.stop_live()
-                self.sociushelper.go_to_post()
-                self.sociushelper.share_live_record("broadcast",x)
-                self.sociushelper.click_camera_floatball()
-                self.sociushelper.back_soocii()
-                self.sociushelper.swipe_to_aboutme()
-                self.sociushelper.refresh_aboutme()
+            # for x in range(10):
+            self.sociushelper.click_open_fab_button()
+            self.sociushelper.choice_game()
+            self.sociushelper.setting_live()
+            self.sociushelper.click_camera_floatball()
+            self.sociushelper.broadcast("hi welcome to my broadcast")
+            for y in range(3):
+                self.sociushelper.change_camera()
+            #share post
+            self.sociushelper.stop_live()
+            self.sociushelper.go_to_post()
+            self.sociushelper.share_live_record("broadcast",x)
+            self.sociushelper.click_camera_floatball()
+            self.sociushelper.back_soocii()
+            self.sociushelper.swipe_to_aboutme()
+            self.sociushelper.refresh_aboutme()
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
@@ -452,6 +453,7 @@ class LiveTests(BaseTests):
             self.sociushelper.click_require_permission_button()
             for x in range(10):
                 #go to live in discover
+
                 self.sociushelper.gotochat_with_discovery()
                 #viewer test
                 self.sociushelper.chat_live("i love this game")
@@ -531,7 +533,6 @@ class PostsTests(BaseTests):
 
     def test_comments(self):
         try:
-
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
 
@@ -564,7 +565,9 @@ class PostsTests(BaseTests):
             self.sociushelper.swipe_posts()#click share button
             self.sociushelper.swpie_share_posts()#click share posts button
             self.sociushelper.swipe_share_posts_to_soocii()
-            self.sociushelper.input_send_share_message()#input message and click send button
+
+            self.sociushelper.input_send_share_message("this is share post testing")#input message and click send button
+
             self.sociushelper.swipe_refresh()
 
             self.assertTrue(self.sociushelper.chech_share_posts())#make sure
@@ -572,19 +575,77 @@ class PostsTests(BaseTests):
 
         except :
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
-            self.syshelper.capture_screen("test_open_live")
+            self.syshelper.capture_screen("test_share_posts")
             raise
         finally:
             pass
 
+
+    def test_upload_picture(self):
+        try:
+
+            nofile()#delete all file
+            accounthelper = AccountHelper()
+
+            # Create new account button on Soocii
+            self.sociushelper.click_create_new_account_using_email_button()
+
+            # flow to create new account
+            self.sociushelper.create_account(
+                accounthelper.name,
+                accounthelper.name,
+                accounthelper.email,
+                "password1234")
+
+            # confirm to follow recommended celebrity
+            self.sociushelper.click_confirm_recommended_celebrity()
+            self.sociushelper.click_require_permission_button()
+
+
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.click_share_picture()#click image button in about me,and share photo
+
+            self.sociushelper.check_and_refresh_share_posts("upload img from local")
+            #come back to aboutme,to check share posts is exist (picture)
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_upload_picture")
+            raise
+        finally:
+            pass
+
+    def test_check_and_share_record(self):
+
+        try:
+            nofile()#clear all file
+
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            self.sociushelper.click_require_permission_button()
+            havefile()#put file to test case (photo and viedo)
+            self.sociushelper.waitii()
+
+            print "cccccccc :" +os.path.abspath(path1)
+
+            self.sociushelper.swipe_to_aboutme()
+
+            self.sociushelper.click_viedo_to_share()##click viedo button in about me,and share viedo
+
+            self.sociushelper.check_and_refresh_share_posts("video from about me")
+            #come back to aboutme,to check share posts is exist (viedo)
+
+        except :
+            self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
+            self.syshelper.capture_screen("test_check_and_share_record")
+            raise
+        finally:
+            pass
     def test_share_posts_to_otherapp(self):
         try:
-            expectedDisplayName=config.EXISTING_FACEBOOK_ACCOUNT1_DISPLAYNAME
-            expectedSoociiId=config.EXISTING_FACEBOOK_ACCOUNT1_SOOCIIID
-
-            # Facebook Login button on Soocii
-            self.sociushelper.click_facebook_login_button()
-            self.syshelper.login_facebook_account(config.EXISTING_FACEBOOK_ACCOUNT1, config.EXISTING_FACEBOOK_ACCOUNT1_PWD)
+            self.sociushelper.click_login_by_email_link()
+            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
