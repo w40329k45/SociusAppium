@@ -540,9 +540,9 @@ class PostsTests(BaseTests):
 
             self.sociushelper.swipe_to_aboutme()
             self.sociushelper.swipe_posts()#into  single posts
-            check_a = self.sociushelper.check_like_num() # (a) to get like of number
+            check_a = self.sociushelper.check_like_num(["like", u"個棒"]) # (a) to get like of number
             self.sociushelper.swipe_like()#click like
-            check_b = self.sociushelper.check_like_num() # (b) to get like of number
+            check_b = self.sociushelper.check_like_num(["like", u"個棒"]) # (b) to get like of number
             self.assertTrue(check_b > check_a) #After click like_bt , compare (a) with (b) count whether +1
             self.sociushelper.swipe_like()#keep like
             self.sociushelper.swipe_and_send_message("this is qa message")#input message to share_EditText ,and click send button
