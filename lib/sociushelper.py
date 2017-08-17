@@ -458,8 +458,13 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
                     self.wait_transition(2.5)
 
-                    videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
-                    vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
+                    try:
+                        videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_video_play")))
+                        vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
+                    except Exception as e:
+                        videonum=self.wait.until(EC.presence_of_all_elements_located((By.ID,"iv_screenshot")))
+                        vtag=self.wait.until(EC.presence_of_all_elements_located((By.ID,"tv_tag")))
+
                     if len(videonum)<4:
                         return False
                     else:
@@ -474,7 +479,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             self.wait_transition(2.5)
 
             items = self.wait.until(EC.presence_of_all_elements_located((By.ID,"text")))
-            if str(items[len(items)-1]) == str(d[len(d)-1]):
+            if items[len(items)-1].text == str(d[len(d)-1]):
                 return True
 
     def check_zendesk(self):

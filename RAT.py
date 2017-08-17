@@ -22,7 +22,7 @@ PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
-path1 = "../SociusAppium/test_resources/."
+path1 = "../SociusAppium3/test_resources/."
 
 # logger
 logger = logging.getLogger()
@@ -52,6 +52,7 @@ def nofile():
 #putin testfile
 def havefile():
     subprocess.Popen(['adb', 'push', os.path.abspath(path1)+"/.", '/sdcard/Soocii/'])
+    print os.path.abspath(path1)+"/."
 
 
 class BaseTests(unittest.TestCase):
@@ -320,6 +321,8 @@ class DiscoveryAndSupportTests(BaseTests):
             raise
 
     def test_discoverytap(self):
+        reload(sys)
+        sys.setdefaultencoding("utf-8")
         try:
             self.sociushelper.click_login_by_email_link()
             self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
@@ -703,7 +706,7 @@ class otherposts(BaseTests):
             share_a = self.sociushelper.check_like_num(["shares", u"個分享"])
             self.sociushelper.swpie_share_posts()#click share posts button
             self.sociushelper.swipe_share_posts_to_soocii()
-            self.sociushelper.input_send_share_message()#input message and click send button
+            self.sociushelper.input_send_share_message("share posts testing")#input message and click send button
             self.sociushelper.swipe_posts()
             share_b = self.sociushelper.check_like_num(["shares", u"個分享"])
             self.assertTrue(int(share_b)-1 == int(share_a))
