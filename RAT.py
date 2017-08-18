@@ -22,7 +22,7 @@ PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
-path1 = "../SociusAppium3/test_resources/."
+path1 = "./test_resources/."
 
 # logger
 logger = logging.getLogger()
@@ -396,6 +396,10 @@ class LiveTests(BaseTests):
             #open_streaming 10 times
             # for x in range(10):
             self.sociushelper.click_open_fab_button()
+            try:
+                self.sociushelper.click_accept()
+            except:
+                pass
             self.sociushelper.choice_game()
             self.sociushelper.setting_live()
             self.sociushelper.click_camera_floatball()
@@ -425,6 +429,10 @@ class LiveTests(BaseTests):
             #open_streaming 10 times
             for x in range(10):
                 self.sociushelper.click_open_fab_button()
+                try:
+                    self.sociushelper.click_accept()
+                except:
+                    pass
                 self.sociushelper.choice_game()
                 self.sociushelper.setting_live()
                 self.sociushelper.click_camera_floatball()

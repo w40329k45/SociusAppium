@@ -576,6 +576,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(2)
         self.click_button_with_id("exo_pause")
 
+    def click_accept(self):
+        self.wait_transition(2)
+        self.click_button_with_id("btn_accept")
+
     def choice_game(self):
         self.click_textview_with_text(["Snake Off","Snake Off"])
         self.wait_transition(1)
