@@ -154,6 +154,7 @@ class AppiumBaseHelper():
         center_y=self.window_size["height"]*0.31
         self.driver.swipe(start_x=center_x,start_y=center_y,end_x=center_x,end_y=center_y,duration=2000)
         self.wait_transition(4)
+
     def get_time(self):
         a = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         return a
