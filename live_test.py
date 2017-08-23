@@ -86,7 +86,6 @@ class LiveTests(BaseTests):
                     self.sociushelper.click_accept()     
                 except:
                     pass
-                self.sociushelper.click_accept()
                 self.sociushelper.choice_game()
                 self.sociushelper.setting_live()
                 self.sociushelper.click_camera_floatball()
@@ -99,9 +98,7 @@ class LiveTests(BaseTests):
                 #get time
                 localtime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 self.sociushelper.share_live_record(localtime+"download",x)
-                self.syshelper.start_snake_off()
-                self.sociushelper.click_camera_floatball()
-                self.sociushelper.back_soocii()
+                opensoocii()
                 self.sociushelper.swipe_to_aboutme()
                 self.sociushelper.refresh_aboutme()
 
@@ -114,7 +111,7 @@ class LiveTests(BaseTests):
     def test_viewer(self):
         try:
             self.sociushelper.click_login_by_email_link()
-            self.sociushelper.login_account("channing@gmail.com", "zxasqw123")
+            self.sociushelper.login_account("channing999@gmail.com", "zxasqw123")
             self.sociushelper.click_require_permission_button()
             for x in range(10):
                 #go to live in discover
@@ -123,6 +120,7 @@ class LiveTests(BaseTests):
                 #viewer test
                 self.sociushelper.chat_live("i love this game")
                 self.sociushelper.click_sharelink_button()
+                self.sociushelper.click_viewer_button()
                 self.sociushelper.click_viewer_button()
                 self.assertTrue(self.sociushelper.check_viewer_name())
                 self.sociushelper.click_viewer_button()
