@@ -349,7 +349,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def get_personal_info(self):
         self.swipe_to_aboutme()
-        self.click_button_with_id("tv_about_me_more")
+        #self.click_button_with_id("tv_about_me_more")
         displayName = self.get_text_with_id("tv_display_name")
         soociiId = self.get_text_with_id("tv_soocii_id")
         # go back to main page
@@ -358,7 +358,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def get_friendlist_info(self):
         self.swipe_to_friendlist()
-        friends_video = self.wait.until(EC.presence_of_all_elements_located((By.ID, "video")))
+        self.wait_transition(2)
+        friends_video = self.wait.until(EC.presence_of_all_elements_located((By.ID, "watch_list_username_text")))
         if friends_video is None:
          return False
         else:
@@ -539,7 +540,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(3)
 
     def click_camera_floatball(self):
-        self.wait_transition(5)
+        self.wait_transition(7)
         #dp=px*160/dpi
         #px=dp*dpi/160
         center_x = self.window_size["width"]
@@ -690,9 +691,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #choose video
         if self.isAndroid5():
             avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.View")))
+            avideo[0].click()
         else:
             avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
-        avideo[1].click()
+            avideo[0].click()
         self.wait_transition(2)
 
     def new_local_video_post(self):
@@ -846,38 +848,11 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                         return
         self.wait_transition(1)
 
-    def goto_RTMP(self):
-        self.swipe_to_newsfeed()
-        self.wait_transition(30)
-        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
-        for el in items:
-            self.logger.info(u'Check text view: {}'.format(el.text))
-            if el.text == "test stream":
-                self.logger.info(u'Found text view: {}'.format(el.text))
-                self.wait_transition(2)
-                self.click_textview_with_text(["test stream","test stream"])
-                self.wait_transition(1)
-                return
-
-    def gotochat_with_discovery(self):
-        self.swipe_discover()
-        x=1
-        while x==1:
-            items = self.wait.until(EC.presence_of_all_elements_located((By.ID, "tv_streaming_message")))
-            for el in items:
-                self.logger.info(u'Check text view: {}'.format(el.text))
-                if el.text == "test stream":
-                    self.logger.info(u'Found text view: {}'.format(el.text))
-                    el.click()
-                    x=2
-                    return
-
-
     def chat_live(self,a):
         x = self.window_size["width"] * 0.5
         y = self.window_size["height"] * 0.5
         self.wait_transition(20)
-        self.driver.tap([(x,y)],350)
+        #self.driver.tap([(x,y)],350)
         self.wait_transition(2)
         self.click_button_with_id("messageEditText")
         self.wait_transition(2)
@@ -940,20 +915,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                     x=2
                     return
 
-#
-
-    def chat_live(self,a):
-        x = self.window_size["width"] * 0.5
-        y = self.window_size["height"] * 0.5
-        self.wait_transition(20)
-        self.driver.tap([(x,y)],350)
-        self.wait_transition(2)
-        self.click_button_with_id("messageEditText")
-        self.wait_transition(2)
-        self.send_text_with_id("messageEditText", a)
-        self.logger.info('sent message: {}'.format(a))
-        self.click_button_with_id("sendButton")
-        self.wait_transition(1)
 
     def click_sharelink_button(self):
         self.click_button_with_id("shareButton")
@@ -969,6 +930,26 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
         self.press_back_key()
         self.wait_transition(2)
+
+    def open_live_ingame(self):
+        self.click_button_with_id("iv_menu_icon_broadcast")
+        self.wait_transition(2)
+        self.click_accept()
+        self.wait_transition(2)
+        self.click_button_with_id("btn_friend_broadcast")
+        self.wait_transition(2)
+        self.click_button_with_id("button1")
+        self.wait_transition(2)
+
+    def record_ingame(self):
+        self.click_button_with_id("iv_menu_icon_record")
+        self.wait_transition(2)
+        self.click_button_with_id("button1")
+
+    def screenshot_ingame(self):
+        self.click_button_with_id("iv_menu_icon_screenshot")
+        self.wait_transition(2)
+        self.click_button_with_id("button1")
 
 
     def check_viewer_name(self):
