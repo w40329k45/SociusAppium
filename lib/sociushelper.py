@@ -237,14 +237,14 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def swipe_to_faq(self):
         self.wait_transition(2)
-        self.click_textview_with_id("tv_faq")
+        self.click_textview_with_id("rl_faq")
 
     def swipe_to_contact(self):
         self.wait_transition(2)
-        self.click_textview_with_id("tv_contact")
+        self.click_textview_with_id("rl_contact_us")
 
     def swipe_refresh(self):
-        self.wait_transition(2)
+        self.wait_transition(2.5)
         self.swipe_down(350)
 
     def swipe_loading(self):
@@ -291,6 +291,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 #
         self.wait_transition(2.5)
         try:
+            # self.swipe_up(300)
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
         except :
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_screenshot")))
@@ -352,9 +353,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #self.click_button_with_id("tv_about_me_more")
         displayName = self.get_text_with_id("tv_display_name")
         soociiId = self.get_text_with_id("tv_soocii_id")
-        # go back to main page
-        self.press_back_key()
-        return displayName, soociiId
+        return displayName, soociiId.split("S.")[1]
 
     def get_friendlist_info(self):
         self.swipe_to_friendlist()
@@ -643,6 +642,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return True
     def check_post_title(self,text):
         #check title
+        self.swipe_to_aboutme()
         postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
         posttitle=postmsg.text
         posttitle.index(text)
@@ -694,7 +694,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             avideo[0].click()
         else:
             avideo=self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME,"android.view.ViewGroup")))
-            avideo[0].click()
+            avideo[1].click()
         self.wait_transition(2)
 
     def new_local_video_post(self):

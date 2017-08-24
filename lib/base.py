@@ -145,8 +145,8 @@ class AppiumBaseHelper():
     def swipe_hash(self):
         left_x = self.window_size["width"] * 0.1
         right_x = self.window_size["width"] * 0.9
-        center_y = self.window_size["height"] * 0.56
-        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=500)
+        center_y = self.window_size["height"] * 0.52
+        self.driver.swipe(start_x=right_x, start_y=center_y, end_x=left_x, end_y=center_y, duration=800)
         self.wait_transition(0.5)
 
     def swipe_longtap(self):

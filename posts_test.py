@@ -49,6 +49,8 @@ class PostsTests(BaseTests):
 
             self.sociushelper.swipe_to_newsfeed()
 
+            self.sociushelper.swipe_refresh()
+
             self.sociushelper.click_viedo_to_share()##click viedo button in about me,and share viedo
 
             self.sociushelper.swipe_to_aboutme()
@@ -86,6 +88,8 @@ class PostsTests(BaseTests):
 
 
             self.sociushelper.swipe_to_newsfeed()
+
+            self.sociushelper.swipe_refresh()
 
             self.sociushelper.new_local_video_post()
 
@@ -168,6 +172,8 @@ class PostsTests(BaseTests):
 
             self.sociushelper.swipe_to_newsfeed()
 
+            self.sociushelper.swipe_refresh()
+
             self.sociushelper.click_share_picture()#click image button in about me,and share photo
 
             self.sociushelper.check_and_refresh_share_posts("upload img from local")
@@ -194,6 +200,8 @@ class PostsTests(BaseTests):
             print "cccccccc :" +os.path.abspath(path1)
 
             self.sociushelper.swipe_to_newsfeed()
+
+            self.sociushelper.swipe_refresh()
 
             self.sociushelper.click_viedo_to_share()##click viedo button in about me,and share viedo
 
