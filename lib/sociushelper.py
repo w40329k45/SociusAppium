@@ -80,7 +80,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         # only require for Android6+
         if self.isAndroid5():
             return
-        self.click_textview_with_text([u"確認","Confirm"])
+        self.click_textview_with_text([u"確認",u"confirm"])
         # allow all system permissions
         self.allow_system_permissions(4)
         self.wait_transition(1)
@@ -134,7 +134,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             self.logger.info('sent password: {}'.format(pwd))
         self.click_button_with_id("register")
         # transition to next page
-        self.wait_transition(1)
+        self.wait_transition(5)
 
     def add_followers(self):
         self.click_button_with_id("add_follow_confirm")
@@ -668,12 +668,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(2)
         self.check_post_title("edit post")
 
-    def check_and_refresh_share_posts(self,text):#today
-        for x in range(3):
-            self.swipe_refresh()
-            self.wait_transition(3)
-        self.check_post_title(text)
-
     def check_share_otherapp_posts(self):
         self.swipe_posts()
         self.swpie_share_posts()
@@ -757,22 +751,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.wait_transition(1.5)
 
         self.send_text_with_id("upload_edittext","upload img from local")#posts message
-        self.wait_transition(1.5)
-
-        self.click_textview_with_id("tv_share")#click share button
-        self.wait_transition(1.5)
-
-
-
-    def click_viedo_to_share(self):
-        self.swipe_aboutme_video()#click video
-
-        self.click_button_with_id("btn_trim_complete")
-        self.wait_transition(1)
-        self.click_button_with_id("btn_trim_complete")
-        self.wait_transition(1)#click next button x2
-
-        self.send_text_with_id("upload_edittext","video from about me")#posts message
         self.wait_transition(1.5)
 
         self.click_textview_with_id("tv_share")#click share button
@@ -876,19 +854,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         self.press_back_key()
         self.wait_transition(2)
 
-
-    def check_viewer_name(self):
-        items = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.TextView")))
-        for el in items:
-            self.logger.info(u'Check text view: {}'.format(el.text))
-            if el.text == "chnnnnnnnb":
-                self.logger.info(u'Found text view: {}'.format(el.text))
-                self.wait_transition(2)
-                return True
-        return False
-
-
-
     def goto_RTMP(self):
         self.swipe_to_newsfeed()
         self.wait_transition(30)
@@ -914,22 +879,6 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
                     el.click()
                     x=2
                     return
-
-
-    def click_sharelink_button(self):
-        self.click_button_with_id("shareButton")
-        self.wait_transition(5)
-        self.press_back_key()
-
-    def click_viewer_button(self):
-        self.wait_transition(5)
-        self.click_button_with_id("img_btn_check_viewers")
-        self.wait_transition(1)
-
-    def leave_live(self):
-        self.press_back_key()
-        self.press_back_key()
-        self.wait_transition(2)
 
     def open_live_ingame(self):
         self.click_button_with_id("iv_menu_icon_broadcast")
