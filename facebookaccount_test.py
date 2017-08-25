@@ -64,7 +64,7 @@ class FacebookAccountTests(BaseTests):
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
+            self.assertTrue("ID: S."+expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
 
             # switch to home and back to soocii
@@ -73,7 +73,7 @@ class FacebookAccountTests(BaseTests):
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
+            self.assertTrue("ID: S."+expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
             # don't delete the account
         except:
@@ -103,7 +103,7 @@ class FacebookAccountTests(BaseTests):
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
+            self.assertTrue("ID: S."+expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
 
             # switch to home and back to soocii
@@ -112,7 +112,7 @@ class FacebookAccountTests(BaseTests):
             displayName, soociiId = self.sociushelper.get_personal_info()
             self.assertTrue(expectedDisplayName==displayName,
                 u"expect value {}, but return unexpected {}".format(expectedDisplayName, displayName))
-            self.assertTrue(expectedSoociiId==soociiId,
+            self.assertTrue("ID: S."+expectedSoociiId==soociiId,
                 u"expect value {}, but return unexpected {}".format(expectedSoociiId, soociiId))
         except:
             self.logger.info('caught exception: {}'.format(sys.exc_info()[0]))
