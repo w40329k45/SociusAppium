@@ -525,6 +525,10 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
             return False
         return  True
 
+    def check_text(self, id, text):
+        texts = self.wait.until(EC.presence_of_element_located((By.ID, id)))
+        texts.text.index(text)
+
     def click_choose_album(self):
         self.click_textview_with_text([u"相簿","Photos"])
 
@@ -793,6 +797,40 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         x = self.window_size["width"] * 0.9
         y = self.window_size["height"] * 0.1
         self.driver.tap([(x,y)],500)
+
+    def edit_infophoto(self):
+        self.wait_transition(2)
+        self.click_button_with_id("rl_edit")
+
+        self.wait_transition(2)
+        self.click_button_with_id("iv_avatar")
+
+        self.wait_transition(2)
+        self.click_textview_with_text(u"選擇照片")
+
+        self.wait_transition(2)
+        photofold = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.widget.RelativeLayout")))
+        photofold[0].click()
+
+        self.wait_transition(1)
+        if self.isAndroid5():
+            photobtn = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.view.View")))
+            photobtn[1].click()
+        else:
+            photobtn = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "android.view.ViewGroup")))
+            photobtn[1].click()
+
+    def edit_username_and_introduction(self):
+        self.wait_transition(2)
+        self.send_text_with_id("edit_display_name", "edit display name")
+
+        self.wait_transition(2)
+        self.send_text_with_id("et_about", "Hello welcome to my broatcast!!!")
+
+        self.click_button_with_id("menu_personal_info_check")
+        self.wait_transition(2)
+        self.swipe_refresh()
+        self.swipe_refresh()
 
     def download_live_record(self):
 
