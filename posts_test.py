@@ -81,7 +81,7 @@ class PostsTests(BaseTests):
                 "password1234")
 
             # confirm to follow recommended celebrity
-            self.sociushelper.click_confirm_recommended_celebrity()
+            # self.sociushelper.click_confirm_recommended_celebrity()
 
             # confirm acquiring permission dialog
             self.sociushelper.click_require_permission_button()
@@ -167,7 +167,7 @@ class PostsTests(BaseTests):
                 "password1234")
 
             # confirm to follow recommended celebrity
-            self.sociushelper.click_confirm_recommended_celebrity()
+            # self.sociushelper.click_confirm_recommended_celebrity()
             self.sociushelper.click_require_permission_button()
 
             self.sociushelper.swipe_to_newsfeed()

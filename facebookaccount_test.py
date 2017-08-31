@@ -123,4 +123,3 @@ class FacebookAccountTests(BaseTests):
             self.sociushelper.click_delete_account_button()
 
     # TODO: Login with new facebook account who does NOT friend with any facebook/soocii account
-

@@ -289,7 +289,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
     def swipe_posts(self):
 #
-        self.wait_transition(2.5)
+        self.wait_transition(4)
+        self.swipe_up(900)
         try:
             # self.swipe_up(300)
             posts_bt = self.wait.until(EC.presence_of_element_located((By.ID,"iv_thumbnail")))
@@ -353,7 +354,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #self.click_button_with_id("tv_about_me_more")
         displayName = self.get_text_with_id("tv_display_name")
         soociiId = self.get_text_with_id("tv_soocii_id")
-        return displayName, soociiId.split("S.")[1]
+        return displayName, soociiId
 
     def get_friendlist_info(self):
         self.swipe_to_friendlist()
@@ -398,6 +399,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
 
 
     def chech_share_posts(self):
+        self.swipe_up(900)
         if self.get_text_with_id("tv_msg") in "this is share post testing":
             return True
         return False
@@ -646,7 +648,7 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         return True
     def check_post_title(self,text):
         #check title
-        self.swipe_to_aboutme()
+        # self.swipe_up(900)
         postmsg=self.wait.until(EC.presence_of_element_located((By.ID,"tv_msg")))
         posttitle=postmsg.text
         posttitle.index(text)
@@ -670,16 +672,8 @@ class SociusHelper(unittest.TestCase, AppiumBaseHelper):
         #click confirm
         self.click_button_with_id("tv_share")
         self.wait_transition(2)
+        self.swipe_up(900)
         self.check_post_title("edit post")
-
-    def check_share_otherapp_posts(self):
-        self.swipe_posts()
-        self.swpie_share_posts()
-        self.swipe_share_posts_to_otherapp()
-        shoth=self.wait.until(EC.presence_of_element_located((By.ID,"title")))
-        if shoth is None:
-            return False
-        return True
 
     def choose_video(self):
         #choose folder
